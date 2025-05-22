@@ -1,32 +1,75 @@
-<div class="p-6 bg-[#E7ECF5] min-h-screen">
-    <div class="bg-white shadow rounded-lg overflow-x-auto">
-        <table class="w-full table-auto text-left border-collapse">
-            <thead class="bg-[#2E3A59] text-white">
+<x-app-layout>
+    <x-slot name="header">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <a href="{{ route('siswa.create') }}"
+                class="bg-green-500 text-white px-3 py-2 rounded text-sm hover:bg-green-600">
+                + Tambah Siswa
+            </a>
+            
+            <div class="mt-4 sm:mt-0 flex items-center space-x-2">
+                <!-- Form Pencarian -->
+                <form method="GET" action="{{ route('siswa.index') }}" class="relative" id="search-form">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 pointer-events-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                            fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 
+                                1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 
+                                6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                        </svg>
+                    </div>
+                    <input type="text" name="q" id="search-input" value="{{ request('q') }}" placeholder="Cari nama / NIS"
+                        class="px-12 py-2 border rounded text-sm focus:outline-none focus:ring">
+                    <button type="submit"
+                            class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-sm">
+                        Cari
+                    </button>
+                </form>
+            </div>
+        </div>
+    </x-slot>
+
+    <main class="max-w-7xl mx-auto mt-6 px-4">
+        <table class="table-auto w-full bg-white border dark:bg-gray-400 border-gray-200 rounded-lg shadow-md">
+            <thead class="bg-blue-400 dark:bg-gray-700 text-white">
                 <tr>
-                    <th class="p-3 border">No</th>
-                    <th class="p-3 border">NISN</th>
-                    <th class="p-3 border">Nama Siswa</th>
-                    <th class="p-3 border">Aksi</th>
+                    <th class="border border-gray-300 px-4 py-3 text-center">No</th>
+                    <th class="border border-gray-300 px-4 py-3 text-center">NIS</th>
+                    <th class="border border-gray-300 px-4 py-3 text-center">Nama</th>
+                    <th class="border border-gray-300 px-4 py-3 text-center">Saldo</th>
+                    <th class="border border-gray-300 px-4 py-3 text-center">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="text-sm">
-                @foreach ($petugas as $index => $user)
-                    <tr class="bg-white hover:bg-gray-100">
-                        <td class="p-3 border text-center">{{ str_pad($index + 1, 3, '0', STR_PAD_LEFT) }}</td>
-                        <td class="p-3 border">{{ $user->nisn }}</td>
-                        <td class="p-3 border">{{ $user->name }}</td>
-                        <td class="p-3 border">{{ $user->username }}</td>
-                        <td class="p-3 border text-center space-x-2">
-                            <a href="{{ route('petugas.edit', $user->id) }}" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs">Ubah</a>
-                            <form action="{{ route('petugas.destroy', $user->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus?')">
-                                @csrf
-                                @method('DELETE')
-                                <button class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs">Hapus</button>
-                            </form>
-                        </td>
-                    </tr>
+            <tbody>
+                @foreach($siswa as $index => $siswa)
+                <tr class="hover:bg-gray-100">
+                    <td class="px-4 py-2 border text-center">{{ $index + 1 }}</td>
+                    <td class="px-4 py-2 border text-center">{{ $siswa->nis }}</td>
+                    <td class="px-4 py-2 border">{{ $siswa->nama }}</td>
+                    <td class="px-4 py-2 border">
+                        Rp {{ number_format(optional($siswa->tabungan)->saldo ?? 0, 0, ',', '.') }}
+                    </td>
+                    <td class="px-4 py-2 border text-center">
+                        <a href="{{ route('koreksi.create', $siswa->id) }}"
+                        class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-sm">
+                        Koreksi Saldo
+                        </a>
+                    </td>
+                </tr>
                 @endforeach
             </tbody>
         </table>
-    </div>
-</div>
+    </main>
+    @push('scripts')
+    <script>
+        const input = document.getElementById('search-input');
+        const form = document.getElementById('search-form');
+
+        input.addEventListener('input', function () {
+            if (this.value.trim() === '') {
+                form.submit(); 
+            }
+        });
+    </script>
+    @endpush
+
+</x-app-layout>
