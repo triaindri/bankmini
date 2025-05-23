@@ -1,8 +1,15 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Koreksi Saldo - {{ $siswa->nama }}
-        </h2>
+        <div class="flex items-center space-x-4">
+            <a href="{{ route('siswa.index') }}" class="text-white hover:text-blue-400">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+            </a>
+            <h2 class="font-semibold text-xl text-white leading-tight">
+                Koreksi Saldo - {{ $siswa->nama }}
+            </h2>
+        </div>
     </x-slot>
 
     <div class="py-6">

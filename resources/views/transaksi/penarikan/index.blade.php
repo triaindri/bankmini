@@ -1,10 +1,10 @@
 <x-app-layout>
     <x-slot name="header">
          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-            <h2 class="text-xl font-bold text-white">Setoran Tabungan</h2>
+            <h2 class="text-xl font-bold text-white">Penarikan Tabungan</h2>
             <div class="mt-4 sm:mt-0 flex items-center space-x-2">
                 <!-- Form Pencarian -->
-                <form method="GET" action="{{ route('setoran.index') }}" class="relative" id="search-form">
+                <form method="GET" action="{{ route('penarikan.index') }}" class="relative" id="search-form">
                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 pointer-events-none">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                             fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
@@ -35,11 +35,11 @@
             <table class="table-auto w-full bg-white border dark:bg-gray-400 border-gray-200 rounded-lg shadow-md">
                 <thead class="bg-blue-700 dark:bg-gray-700 text-white">
                     <tr>
-                        <th class="border px-4 py-2 text-center">No</th>
-                        <th class="border px-4 py-2 text-center">NIS</th>
-                        <th class="border px-4 py-2 text-center">Nama</th>
-                        <th class="border px-4 py-2 text-center">Saldo</th>
-                        <th class="border px-4 py-2 text-center">Setor</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">No</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">NIS</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Nama</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Saldo</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Penarikan</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -51,19 +51,11 @@
                             <td class="border px-4 py-2">
                                 Rp{{ number_format(optional($item->tabungan)->saldo ?? 0, 0, ',', '.') }}
                             </td>
-                            <td class="border px-4 py-2">
-                                <form action="{{ route('setoran.store') }}" method="POST"
-                                      onsubmit="return confirm('Yakin ingin menyetor saldo?')"
-                                      class="flex flex-col items-center justify-center space-y-2 sm:flex-row sm:space-x-2 sm:space-y-0">
-                                    @csrf
-                                    <input type="hidden" name="siswa_id" value="{{ $item->id }}">
-                                    <input type="number" name="jumlah" placeholder="Jumlah"
-                                           class="border rounded px-2 py-1 w-24 text-sm" required min="1000" step="1000">
-                                    <button type="submit"
-                                            class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 text-sm rounded">
-                                        Setor
-                                    </button>
-                                </form>
+                            <td class="border px-4 py-2 text-center">
+                                <a href="{{ route('penarikan.create', $item->id) }}"
+                                class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 text-sm rounded">
+                                    Tarik
+                                </a>
                             </td>
                         </tr>
                     @endforeach

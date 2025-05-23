@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('tabungan_id')->constrained('tabungan')->onDelete('cascade');
             $table->enum('jenis', ['setor', 'tarik']);
+            $table->string('keterangan')->nullable();
             $table->integer('jumlah');
             $table->date('tanggal');
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');

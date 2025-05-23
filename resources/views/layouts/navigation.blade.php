@@ -20,6 +20,11 @@
                         {{ __('Setoran Tabungan') }}
                     </x-nav-link>
                     @endif
+                    @if(Auth::user()->role === 'petugas')
+                    <x-nav-link :href="route('penarikan.index')" :active="request()->routeIs('penarikan.index')">
+                        {{ __('Penarikan Tabungan') }}
+                    </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -78,6 +83,11 @@
             @if(Auth::user()->role === 'petugas')
             <x-responsive-nav-link :href="route('setoran.index')" :active="request()->routeIs('setoran.index')">
                 {{ __('Setoran Tabungan') }}
+            </x-responsive-nav-link>
+            @endif
+            @if(Auth::user()->role === 'petugas')
+            <x-responsive-nav-link :href="route('penarikan.index')" :active="request()->routeIs('penarikan.index')">
+                {{ __('Penarikan Tabungan') }}
             </x-responsive-nav-link>
             @endif
         </div>

@@ -5,6 +5,8 @@ use App\Http\Controllers\SiswaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TransaksiSetoranController;
 use App\Http\Controllers\KoreksiSaldoController;
+use App\Http\Controllers\TransaksiPenarikanController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -36,4 +38,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/siswa/{siswa}/koreksi', [KoreksiSaldoController::class, 'store'])->name('koreksi.store');
 });
 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/transaksi/penarikan', [TransaksiPenarikanController::class, 'index'])->name('penarikan.index');
+    Route::post('/transaksi/penarikan', [TransaksiPenarikanController::class, 'store'])->name('penarikan.store');
+    Route::get('/penarikan/create/{siswa}', [TransaksiPenarikanController::class, 'create'])->name('penarikan.create');
+});
 require __DIR__.'/auth.php';

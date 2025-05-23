@@ -28,36 +28,43 @@
         </div>
     </x-slot>
 
-    <main class="max-w-7xl mx-auto mt-6 px-4">
-        <table class="table-auto w-full bg-white border dark:bg-gray-400 border-gray-200 rounded-lg shadow-md">
-            <thead class="bg-blue-400 dark:bg-gray-700 text-white">
-                <tr>
-                    <th class="border border-gray-300 px-4 py-3 text-center">No</th>
-                    <th class="border border-gray-300 px-4 py-3 text-center">NIS</th>
-                    <th class="border border-gray-300 px-4 py-3 text-center">Nama</th>
-                    <th class="border border-gray-300 px-4 py-3 text-center">Saldo</th>
-                    <th class="border border-gray-300 px-4 py-3 text-center">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($siswa as $index => $siswa)
-                <tr class="hover:bg-gray-100">
-                    <td class="px-4 py-2 border text-center">{{ $index + 1 }}</td>
-                    <td class="px-4 py-2 border text-center">{{ $siswa->nis }}</td>
-                    <td class="px-4 py-2 border">{{ $siswa->nama }}</td>
-                    <td class="px-4 py-2 border">
-                        Rp {{ number_format(optional($siswa->tabungan)->saldo ?? 0, 0, ',', '.') }}
-                    </td>
-                    <td class="px-4 py-2 border text-center">
-                        <a href="{{ route('koreksi.create', $siswa->id) }}"
-                        class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-sm">
-                        Koreksi Saldo
-                        </a>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
+    <main class="py-6 max-w-6xl mx-auto">
+        <div class="bg-white p-6 rounded shadow">
+            @if(session('success'))
+                <div class="bg-green-100 text-blue-700 border border-blue-300 px-4 py-2 rounded mb-4">
+                    {{ session('success') }}
+                </div>
+            @endif
+            <table class="table-auto w-full bg-white border dark:bg-gray-400 border-gray-200 rounded-lg shadow-md">
+                <thead class="bg-blue-700 dark:bg-gray-700 text-white">
+                    <tr>
+                        <th class="border border-gray-300 px-4 py-2 text-center">No</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">NIS</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Nama</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Saldo</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($siswa as $index => $siswa)
+                    <tr class="hover:bg-gray-100">
+                        <td class="px-4 py-2 border text-center">{{ $index + 1 }}</td>
+                        <td class="px-4 py-2 border text-center">{{ $siswa->nis }}</td>
+                        <td class="px-4 py-2 border">{{ $siswa->nama }}</td>
+                        <td class="px-4 py-2 border">
+                            Rp {{ number_format(optional($siswa->tabungan)->saldo ?? 0, 0, ',', '.') }}
+                        </td>
+                        <td class="px-4 py-2 border text-center">
+                            <a href="{{ route('koreksi.create', $siswa->id) }}"
+                            class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-sm">
+                            Koreksi Saldo
+                            </a>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </main>
     @push('scripts')
     <script>
