@@ -15,23 +15,63 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-blue-200 dark:bg-gray-900">
-            @include('layouts.navigation')
+    <div x-data="{ open: false }" class="min-h-screen flex bg-blue-100 dark:bg-gray-900">
 
-            <!-- Page Heading -->
+        <!-- Sidebar -->
+        <div :class="open ? 'block' : 'hidden'" class="md:block w-64 bg-blue-900 dark:bg-gray-800 p-4 space-y-4">
+            <!-- Logo -->
+            <div class="mb-6">
+                <a href="{{ route('dashboard') }}">
+                    <x-application-logo class="h-8 w-auto text-gray-800 dark:text-gray-200" />
+                </a>
+            </div>
+
+            <!-- Menu -->
+            <nav class="space-y-2">
+                <a href="{{ route('siswa.index') }}" class="block text-white dark:text-gray-200">Data Siswa</a>
+                <a href="{{ route('setoran.index') }}" class="block text-white dark:text-gray-200">Setoran Tabungan</a>
+                <a href="{{ route('penarikan.index') }}" class="block text-white dark:text-gray-200">Penarikan Tabungan</a>
+            </nav>
+
+            <!-- Profil dan Logout -->
+            <div class="mt-10 border-t pt-4 text-sm text-white dark:text-gray-300">
+                <div>{{ Auth::user()->name }}</div>
+                <div>{{ Auth::user()->email }}</div>
+                <form method="POST" action="{{ route('logout') }}" class="mt-2">
+                    @csrf
+                    <button type="submit" class="text-red-400 hover:underline">Logout</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col">
+            <!-- Header with Hamburger -->
+            <header class="bg-white dark:bg-gray-800 p-4 shadow md:hidden flex items-center justify-between">
+                <button @click="open = !open" class="text-gray-800 dark:text-white focus:outline-none">
+                    <!-- Hamburger Icon -->
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </header>
+
+            <!-- Page Header -->
             @isset($header)
-                <header class="bg-blue-800 dark:bg-gray-800 shadow">
-                    <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
+                <div class="bg-blue-800 dark:bg-gray-700 shadow px-4 py-3 text-white">
+                    {{ $header }}
+                </div>
             @endisset
 
             <!-- Page Content -->
-            <main>
+            <main class="p-6">
                 {{ $slot }}
             </main>
         </div>
-        @stack('scripts')
-    </body>
+    </div>
+
+    @stack('scripts')
+</body>
+
 </html>

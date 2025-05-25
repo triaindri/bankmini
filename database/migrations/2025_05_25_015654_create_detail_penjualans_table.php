@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('siswa', function (Blueprint $table) {
+        Schema::create('detail_penjualans', function (Blueprint $table) {
             $table->id();
-            $table->string('nis')->unique();
-            $table->string('nama')->unique();
-            $table->string('kelas');
-            $table->string('alamat');
-            $table->enum('jeniskelamin', ['perempuan', 'laki-laki']);
+            $table->foreignId('penjualan_id')->constrained()->onDelete('cascade');
+            $table->foreignId('produk_id')->constrained('produk')->onDelete('cascade');
+            $table->integer('jumlah');
+            $table->integer('subtotal'); // produk.harga * jumlah
             $table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('siswa');
+        Schema::dropIfExists('detail_penjualans');
     }
 };

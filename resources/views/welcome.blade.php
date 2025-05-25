@@ -19,7 +19,7 @@
             </style>
         @endif
     </head>
-    <body class="bg-blue-200 dark:bg-[#0a0a0a] text-[#1b1b18] flex p-6 lg:p-8 items-center lg:justify-center min-h-screen flex-col">
+    <body class="bg-blue-700 dark:bg-[#0a0a0a] text-[#1b1b18] flex p-6 lg:p-8 items-center lg:justify-center min-h-screen flex-col">
 
         {{-- Header / Navigasi --}}
         <header class="w-full lg:max-w-4xl max-w-[335px] text-sm mb-6">
@@ -32,12 +32,12 @@
                     </a>
             @else
                     <a href="{{ route('login') }}"
-                       class="inline-block px-5 py-2 text-white bg-blue-800 hover:bg-blue-800 rounded-md text-sm">
+                       class="inline-block px-5 py-2 text-white bg-blue-400 hover:bg-blue-200 rounded-md text-sm">
                         Login
                     </a>
                 @if (Route::has('register'))
                     <a href="{{ route('register') }}"
-                        class="inline-block px-5 py-2 border border-blue-800 text-blue-800 hover:bg-blue-800 hover:text-white rounded-md text-sm">
+                        class="inline-block px-5 py-2 border border-blue-100 text-blue-100 hover:bg-blue-400 hover:text-white rounded-md text-sm">
                             Register
                     </a>
                     @endif
@@ -51,20 +51,20 @@
         <main class="flex max-w-[335px] w-full flex-col lg:max-w-4xl lg:flex-row items-center">
             
             {{-- Deskripsi --}}
-            <div class="flex-1 p-6 pb-12 lg:p-20 bg-blue-200 dark:bg-[#161615] dark:text-white flex flex-col justify-center items-start text-left">
-                <h1 class="mb-2 text-3xl lg:text-4xl font-extrabold leading-tight">Selamat Datang di</h1>
-                <h2 class="mb-4 text-2xl font-bold">Bank Mini SMK Pasundan 1 Cianjur</h2>
-                <p class="mb-6 text-sm text-gray-700 dark:text-gray-300">
+            <div class="flex-1 p-6 pb-12 lg:p-20 bg-blue-700 dark:bg-[#161615] dark:text-white flex flex-col justify-center items-start text-left">
+                <h1 class="mb-2 text-3xl lg:text-4xl font-extrabold text-blue-100 leading-tight">Selamat Datang di</h1>
+                <h2 class="mb-4 text-blue-100 text-2xl font-bold">Bank Mini SMK Pasundan 1 Cianjur</h2>
+                <p class="mb-6 text-sm text-blue-100 dark:text-gray-300">
                     Sistem ini dirancang untuk mendukung kegiatan praktik perbankan siswa-siswi SMK.
                 </p>
                 <a href="{{ route('login') }}"
-                   class="inline-block bg-blue-800 hover:bg-blue-800 text-white px-6 py-2 rounded-md text-sm">
+                   class="inline-block bg-blue-300 hover:bg-blue-500 text-blue-700 hover:text-white px-6 py-2 rounded-md text-sm">
                     Mulai Sekarang
                 </a>
             </div>
 
             {{-- Logo --}}
-            <div class="bg-blue-200 dark:bg-[#1D0002] rounded-lg lg:w-[400px] w-full mt-10 lg:mt-0 flex justify-center items-center p-8">
+            <div class="bg-blue-700 dark:bg-[#1D0002] rounded-lg lg:w-[400px] w-full mt-10 lg:mt-0 flex justify-center items-center p-8">
                 <img src="https://3.bp.blogspot.com/--mPabqj0DVc/WmvZj0d_cZI/AAAAAAAAACc/8d97Y7BdKsYMr9uY2IPkkDj4dOOOxQB5ACLcBGAs/s1600/pasundan%2Blogo.png"
                      alt="Logo Pasundan"
                      class="w-40" />
@@ -73,7 +73,7 @@
     </div>
 
     {{-- Footer --}}
-    <footer class="mt-12 text-xs text-center text-gray-500 dark:text-gray-400">
+    <footer class="mt-12 text-xs text-center text-white dark:text-gray-400">
         © {{ date('Y') }} SMK Pasundan 1 Cianjur. All rights reserved.
     </footer>
 </body>

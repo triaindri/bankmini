@@ -17,11 +17,17 @@ class SiswaController extends Controller
         $request->validate([
             'nis' => 'required|unique:siswa,nis',
             'nama' => 'required|string|max:255',
+            'kelas' => 'required|string|max:50',
+            'alamat' => 'required|string|max:255',
+            'jeniskelamin' => 'required|in:perempuan,laki-laki',
         ]);
 
         $siswa = Siswa::create([
             'nis' => $request->nis,
             'nama' => $request->nama,
+            'kelas' => $request->kelas,
+            'alamat' => $request->alamat,
+            'jeniskelamin' => $request->jeniskelamin,
         ]);
 
         // Tambahkan tabungan awal dengan saldo 0

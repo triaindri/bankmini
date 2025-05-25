@@ -10,31 +10,70 @@
         </div>
     </x-slot>
 
-    <div class="py-6">
-        <div class="max-w-xl mx-auto bg-white p-6 rounded shadow">
-            <form method="POST" action="{{ route('siswa.store') }}">
+    <div class="py-6 max-w-3xl mx-auto">
+        <div class="bg-white p-6 rounded shadow">
+            @if ($errors->any())
+                <div class="mb-4 bg-red-100 text-red-700 p-4 rounded">
+                    <ul class="list-disc pl-6">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form action="{{ route('siswa.store') }}" method="POST">
                 @csrf
 
+                <!-- NIS -->
                 <div class="mb-4">
-                    <label for="nis" class="block text-gray-700">NIS</label>
-                    <input type="text" id="nis" name="nis" value="{{ old('nis') }}"
-                           class="w-full px-3 py-2 border rounded" required>
-                    @error('nis') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                    <label for="nis" class="block font-medium text-gray-700">NIS</label>
+                    <input type="text" name="nis" id="nis" value="{{ old('nis') }}" required
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-300">
                 </div>
 
+                <!-- Nama -->
                 <div class="mb-4">
-                    <label for="nama" class="block text-gray-700">Nama</label>
-                    <input type="text" id="nama" name="nama" value="{{ old('nama') }}"
-                           class="w-full px-3 py-2 border rounded" required>
-                    @error('nama') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                    <label for="nama" class="block font-medium text-gray-700">Nama</label>
+                    <input type="text" name="nama" id="nama" value="{{ old('nama') }}" required
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-300">
                 </div>
 
-                <div class="flex justify-end">
-                    <a href="{{ route('siswa.index') }}" class="px-4 py-2 bg-gray-300 rounded mr-2">Batal</a>
+                <!-- Kelas -->
+                <div class="mb-4">
+                    <label for="kelas" class="block font-medium text-gray-700">Kelas</label>
+                    <input type="text" name="kelas" id="kelas" value="{{ old('kelas') }}" required
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-300">
+                </div>
+
+                <!-- Alamat -->
+                <div class="mb-4">
+                    <label for="alamat" class="block font-medium text-gray-700">Alamat</label>
+                    <textarea name="alamat" id="alamat" rows="3" required
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-300">{{ old('alamat') }}</textarea>
+                </div>
+
+                <!-- Jenis Kelamin -->
+                <div class="mb-4">
+                    <label for="jeniskelamin" class="block font-medium text-gray-700">Jenis Kelamin</label>
+                    <select name="jeniskelamin" id="jeniskelamin" required
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-300">
+                        <option value="">-- Pilih Jenis Kelamin --</option>
+                        <option value="perempuan" {{ old('jeniskelamin') == 'perempuan' ? 'selected' : '' }}>Perempuan</option>
+                        <option value="laki-laki" {{ old('jeniskelamin') == 'laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                    </select>
+                </div>
+
+                <!-- Tombol Simpan -->
+                <div class="mt-6">
                     <button type="submit"
-                            class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                        class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
                         Simpan
                     </button>
+                    <a href="{{ route('siswa.index') }}"
+                        class="ml-2 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
+                        Batal
+                    </a>
                 </div>
             </form>
         </div>

@@ -6,15 +6,18 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TransaksiSetoranController;
 use App\Http\Controllers\KoreksiSaldoController;
 use App\Http\Controllers\TransaksiPenarikanController;
+use App\Http\Controllers\PenjualanController;
+use App\Http\Controllers\DashboardController;
 
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -24,8 +27,12 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/transaksitabungan/setoran', [TransaksiSetoranController::class, 'index'])->name('setoran.index');
+    Route::get('/transaksitabungan/setoran/create', [TransaksiSetoranController::class, 'create'])->name('setoran.create'); // tambah halaman form
     Route::post('/transaksitabungan/setoran', [TransaksiSetoranController::class, 'store'])->name('setoran.store');
+
+    Route::get('/transaksitabungan/setoran/get-siswa-by-nis', [TransaksiSetoranController::class, 'getSiswaByNis'])->name('setoran.getSiswaByNis'); // ajax
 });
+
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/siswa', [SiswaController::class, 'index'])->name('siswa.index');
@@ -43,4 +50,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/transaksi/penarikan', [TransaksiPenarikanController::class, 'store'])->name('penarikan.store');
     Route::get('/penarikan/create/{siswa}', [TransaksiPenarikanController::class, 'create'])->name('penarikan.create');
 });
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/penjualan', [PenjualanController::class, 'index'])->name('penjualan.index');
+    Route::get('/penjualan/create', [PenjualanController::class, 'create'])->name('penjualan.create');
+    Route::post('/penjualan', [PenjualanController::class, 'store'])->name('penjualan.store');
+});
+
 require __DIR__.'/auth.php';

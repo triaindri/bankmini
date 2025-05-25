@@ -11,49 +11,65 @@ use Illuminate\Support\Facades\Auth;
 
 class TransaksiSetoranController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $query = Siswa::with('tabungan');
+        // Ambil semua transaksi setoran dengan relasi tabungan dan siswa
+        $setorans = Transaksitabungan::where('jenis', 'setor')->with('tabungan.siswa')->orderBy('tanggal', 'desc')->get();
 
-        if ($request->filled('q')) {
-            $q = $request->q;
-            $query->where(function ($s) use ($q) {
-                $s->where('nama', 'like', "%$q%")
-                ->orWhere('nis', 'like', "%$q%");
-            });
-        }
-
-        $siswa = $query->get();
-
-        return view('transaksi.setoran.index', compact('siswa'));
+        return view('transaksi.setoran.index', compact('setorans'));
     }
 
+    // 2. Tampilkan form tambah setoran
+    public function create()
+    {
+        return view('transaksi.setoran.create');
+    }
+
+    // 3. Simpan transaksi setoran baru
     public function store(Request $request)
     {
         $request->validate([
-            'siswa_id' => 'required|exists:siswa,id',
+            'nis' => 'required|exists:siswa,nis',
             'jumlah' => 'required|integer|min:1000',
+            'tanggal' => 'required|date',
         ]);
 
-        // Ambil tabungan berdasarkan siswa
+        $siswa = Siswa::where('nis', $request->nis)->first();
+
         $tabungan = Tabungan::firstOrCreate(
-            ['siswa_id' => $request->siswa_id],
+            ['siswa_id' => $siswa->id],
             ['saldo' => 0]
         );
 
-        // Tambah saldo
+        // Tambah saldo tabungan
         $tabungan->saldo += $request->jumlah;
         $tabungan->save();
 
-        // Catat transaksi
+        // Catat transaksi setoran
         Transaksitabungan::create([
             'tabungan_id' => $tabungan->id,
             'jenis' => 'setor',
             'jumlah' => $request->jumlah,
-            'tanggal' => now(),
-            'user_id' => Auth::id(), // petugas yang login
+            'tanggal' => $request->tanggal,
+            'user_id' => Auth::id(), // Petugas yang login
         ]);
 
-        return redirect()->back()->with('success', 'Setoran berhasil dicatat.');
+        return redirect()->route('setoran.index')->with('success', 'Setoran berhasil dicatat.');
+    }
+
+    // 4. Endpoint AJAX untuk get data siswa berdasarkan NIS
+    public function getSiswaByNis(Request $request)
+    {
+        $nis = $request->nis;
+        $siswa = Siswa::where('nis', $nis)->first();
+
+        if (!$siswa) {
+            return response()->json(['error' => 'NIS tidak ditemukan'], 404);
+        }
+
+        return response()->json([
+            'nama' => $siswa->nama,
+            'kelas' => $siswa->kelas,
+        ]);
     }
 }

@@ -39,7 +39,7 @@
                         <th class="border border-gray-300 px-4 py-2 text-center">NIS</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Nama</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Saldo</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Penarikan</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -53,8 +53,15 @@
                             </td>
                             <td class="border px-4 py-2 text-center">
                                 <a href="{{ route('penarikan.create', $item->id) }}"
-                                class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 text-sm rounded">
-                                    Tarik
+                                class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 text-sm rounded inline-flex items-center space-x-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-box-arrow-up-left" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd"
+                                            d="M7.364 3.5a.5.5 0 0 1 .5-.5H14.5A1.5 1.5 0 0 1 16 4.5v10a1.5 1.5 0 0 1-1.5 1.5h-10A1.5 1.5 0 0 1 3 14.5V7.864a.5.5 0 1 1 1 0V14.5a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5v-10a.5.5 0 0 0-.5-.5H7.864a.5.5 0 0 1-.5-.5"/>
+                                        <path fill-rule="evenodd"
+                                            d="M0 .5A.5.5 0 0 1 .5 0h5a.5.5 0 0 1 0 1H1.707l8.147 8.146a.5.5 0 0 1-.708.708L1 1.707V5.5a.5.5 0 0 1-1 0z"/>
+                                    </svg>
+                                    <span>Tarik Saldo</span>
                                 </a>
                             </td>
                         </tr>
