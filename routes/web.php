@@ -38,11 +38,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/siswa', [SiswaController::class, 'index'])->name('siswa.index');
     Route::get('/siswa/create', [SiswaController::class, 'create'])->name('siswa.create');
     Route::post('/siswa', [SiswaController::class, 'store'])->name('siswa.store');
-});
-
-Route::middleware(['auth'])->group(function () {
-    Route::get('/siswa/{siswa}/koreksi', [KoreksiSaldoController::class, 'create'])->name('koreksi.create');
-    Route::post('/siswa/{siswa}/koreksi', [KoreksiSaldoController::class, 'store'])->name('koreksi.store');
+    Route::get('/siswa/{id}/edit', [SiswaController::class, 'edit'])->name('siswa.edit');
+    Route::put('/siswa/{id}', [SiswaController::class, 'update'])->name('siswa.update');
+    Route::delete('/siswa/{id}', [SiswaController::class, 'destroy'])->name('siswa.destroy');
 });
 
 Route::middleware(['auth'])->group(function () {

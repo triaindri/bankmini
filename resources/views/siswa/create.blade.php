@@ -66,10 +66,10 @@
 
                 <!-- Tombol Simpan -->
                 <div class="mt-6">
-                    <button type="submit"
-                        class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                    <x-primary-button type="submit"
+                        class="ms-3">
                         Simpan
-                    </button>
+                    </x-primary-button>
                     <a href="{{ route('siswa.index') }}"
                         class="ml-2 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
                         Batal
