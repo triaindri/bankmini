@@ -14,7 +14,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
+        User::UpdateorCreate([
             'name' => 'Koordinator Bank Mini',
             'email' => 'koordinator@bankmini.test',
             'username' => 'koordinator',
@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
         ]);
 
         // Petugas
-        User::create([
+        User::UpdateorCreate([
             'name' => 'Petugas Bank Mini',
             'email' => 'petugas@bankmini.test',
             'username' => 'petugas',

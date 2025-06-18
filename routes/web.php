@@ -8,6 +8,7 @@ use App\Http\Controllers\KoreksiSaldoController;
 use App\Http\Controllers\TransaksiPenarikanController;
 use App\Http\Controllers\PenjualanController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProdukController;
 
 
 Route::get('/', function () {
@@ -55,4 +56,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/penjualan', [PenjualanController::class, 'store'])->name('penjualan.store');
 });
 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/produk', [ProdukController::class, 'index'])->name('produk.index');
+    Route::post('/produk', [ProdukController::class, 'store'])->name('produk.store');
+    Route::put('/produk/{id}', [ProdukController::class, 'update'])->name('produk.update');
+    Route::delete('/produk/{id}', [ProdukController::class, 'destroy'])->name('produk.destroy');
+});
 require __DIR__.'/auth.php';

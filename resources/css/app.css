@@ -1,3 +1,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.form-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.form-col {
+    flex: 1;
+    min-width: 300px;
+}
+.form-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    width: 90px;
+    margin-right: 8px;
+    text-align: right;
+}
+
+.form-group input {
+    width: 300px;
+    padding: 7px;
+}

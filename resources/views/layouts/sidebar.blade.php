@@ -24,6 +24,11 @@
                 Penarikan Tabungan
             </a>
         </li>
+        <li>
+            <a href="{{ route('produk.index') }}" class="text-white block px-4 py-2 rounded hover:bg-blue-100 {{ request()->routeIs('produk.index') ? 'bg-blue-200 font-semibold' : '' }}">
+                Produk
+            </a>
+        </li>
         @endif
     </ul>
 </div>

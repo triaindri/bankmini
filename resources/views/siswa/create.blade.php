@@ -24,36 +24,26 @@
 
             <form action="{{ route('siswa.store') }}" method="POST">
                 @csrf
-
-                <!-- NIS -->
                 <div class="mb-4">
                     <label for="nis" class="block font-medium text-gray-700">NIS</label>
                     <input type="text" name="nis" id="nis" value="{{ old('nis') }}" required
                         class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-300">
                 </div>
-
-                <!-- Nama -->
                 <div class="mb-4">
                     <label for="nama" class="block font-medium text-gray-700">Nama</label>
                     <input type="text" name="nama" id="nama" value="{{ old('nama') }}" required
                         class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-300">
                 </div>
-
-                <!-- Kelas -->
                 <div class="mb-4">
                     <label for="kelas" class="block font-medium text-gray-700">Kelas</label>
                     <input type="text" name="kelas" id="kelas" value="{{ old('kelas') }}" required
                         class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-300">
                 </div>
-
-                <!-- Alamat -->
                 <div class="mb-4">
                     <label for="alamat" class="block font-medium text-gray-700">Alamat</label>
                     <textarea name="alamat" id="alamat" rows="3" required
                         class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-300">{{ old('alamat') }}</textarea>
                 </div>
-
-                <!-- Jenis Kelamin -->
                 <div class="mb-4">
                     <label for="jeniskelamin" class="block font-medium text-gray-700">Jenis Kelamin</label>
                     <select name="jeniskelamin" id="jeniskelamin" required
@@ -63,8 +53,6 @@
                         <option value="laki-laki" {{ old('jeniskelamin') == 'laki-laki' ? 'selected' : '' }}>Laki-laki</option>
                     </select>
                 </div>
-
-                <!-- Tombol Simpan -->
                 <div class="mt-6">
                     <x-primary-button type="submit"
                         class="ms-3">

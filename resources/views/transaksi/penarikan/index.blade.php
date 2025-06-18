@@ -24,7 +24,7 @@
         </div>
     </x-slot>
 
-    <div class="py-6 max-w-6xl mx-auto">
+    <div class="py-3 max-w-6xl mx-auto">
         <div class="bg-white p-6 rounded shadow">
             @if(session('success'))
                 <div class="bg-green-100 text-blue-700 border border-blue-300 px-4 py-2 rounded mb-4">

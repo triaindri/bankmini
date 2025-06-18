@@ -23,8 +23,7 @@
             </div>
         </div>
     </x-slot>
-
-    <main class="py-6 max-w-7xl mx-auto">
+    <main class="py-3 max-w-7xl mx-auto">
         <div class="bg-white p-6 rounded shadow overflow-x-auto">
             @if(session('success'))
                 <div class="bg-green-100 text-blue-700 border border-blue-300 px-4 py-2 rounded mb-4">
@@ -32,9 +31,14 @@
                 </div>
             @endif
             <div class="flex items-center justify-between mb-4">
-                <a href="{{ route('siswa.create') }}"
-                    class="bg-green-500 text-white px-3 py-2 rounded text-sm hover:bg-green-600">
-                    + Tambah Siswa
+                 <a href="{{ route('siswa.create') }}"
+                    class="bg-green-500 text-white px-3 py-2 rounded text-sm hover:bg-green-600 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-plus-circle" viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                    </svg>
+                    Tambah Siswa
                 </a>
                 <div class="flex items-center gap-2">
                     <x-primary-button id="editBtn" class="text-white px-4 py-2 rounded flex items-center gap-2" disabled>
