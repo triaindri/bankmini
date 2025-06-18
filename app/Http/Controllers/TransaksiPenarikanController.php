@@ -36,10 +36,10 @@ class TransaksiPenarikanController extends Controller
             'jumlah' => [
                 'required',
                 'integer',
-                'min:1000',
+                'min:500',
                 function ($attribute, $value, $fail) {
-                    if ($value % 1000 !== 0) {
-                        $fail('Jumlah penarikan harus kelipatan 1000.');
+                    if ($value % 500 !== 0) {
+                        $fail('Jumlah penarikan harus kelipatan 500.');
                     }
                 },
             ],

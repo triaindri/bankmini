@@ -1,10 +1,9 @@
 <x-app-layout>
     <x-slot name="header">
-         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <h2 class="text-xl font-bold text-white">Penarikan Tabungan</h2>
             <div class="mt-4 sm:mt-0 flex items-center space-x-2">
-                <!-- Form Pencarian -->
-                <form method="GET" action="{{ route('penarikan.index') }}" class="relative" id="search-form">
+                <form method="GET" action="{{ route('penarikan.index') }}" class="flex gap-2">
                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 pointer-events-none">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                             fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
@@ -13,10 +12,11 @@
                                 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
                         </svg>
                     </div>
-                    <input type="text" name="q" id="search-input" value="{{ request('q') }}" placeholder="Cari nama / NIS"
-                        class="px-12 py-2 border rounded text-sm focus:outline-none focus:ring">
+                    <input type="text" name="q" id="search-input" value="{{ request('q') }}"
+                        placeholder="Cari nama / NIS"
+                        class="px-4 py-2 border rounded text-sm focus:outline-none focus:ring w-64">
                     <button type="submit"
-                            class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-sm">
+                            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 text-sm">
                         Cari
                     </button>
                 </form>
@@ -31,38 +31,74 @@
                     {{ session('success') }}
                 </div>
             @endif
+            {{-- Form penarikan --}}
+            <form id="formPenarikan" action="{{ route('penarikan.store') }}" method="POST" class="mb-6">
+                @csrf
+                <input type="hidden" name="siswa_id" id="siswa_id">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label for="nis" class="block text-sm font-medium text-gray-700">NIS</label>
+                        <input type="text" id="nis" class="mt-1 block w-full border rounded px-3 py-2" readonly>
+                    </div>
+                    <div>
+                        <label for="nama" class="block text-sm font-medium text-gray-700">Nama</label>
+                        <input type="text" id="nama" class="mt-1 block w-full border rounded px-3 py-2" readonly>
+                    </div>
+                    <div>
+                        <label for="saldo" class="block text-sm font-medium text-gray-700">Saldo</label>
+                        <input type="text" id="saldo" class="mt-1 block w-full border rounded px-3 py-2" readonly>
+                    </div>
+                </div>
+                <div class="mt-4 grid grid-cols-3 gap-4">
+                    <div class="col-span-1">
+                        <label for="jumlah" class="block text-sm font-medium text-gray-700">Jumlah Penarikan</label>
+                        <input type="number" name="jumlah" id="jumlah" min="500" step="500"
+                            class="mt-1 block w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300"
+                            required>
+                    </div>
+                    <div class="col-span-1">
+                        <label for="jenis" class="block text-sm font-medium text-gray-700">Jenis Penarikan</label>
+                        <select name="jenis" id="jenis" required
+                            class="mt-1 block w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300">
+                            <option value="">-- Pilih Jenis Penarikan --</option>
+                            <option value="Pembelian ATK">Pembelian ATK</option>
+                            <option value="Study Tour">Study Tour</option>
+                            <option value="Kenaikan Kelas">Kenaikan Kelas</option>
+                        </select>
+                    </div>
+                    <div></div> <!-- Kosongkan kolom ketiga supaya lebarnya sama seperti atas -->
+                </div>
+                <div class="mt-4">
+                    <button type="submit" id="tarikBtn"
+                            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+                            disabled>
+                        Tarik Saldo
+                    </button>
+                </div>
+            </form>
 
-            <table class="table-auto w-full bg-white border dark:bg-gray-400 border-gray-200 rounded-lg shadow-md">
-                <thead class="bg-blue-700 dark:bg-gray-700 text-white">
+            {{-- Tabel siswa --}}
+            <table class="table-auto w-full bg-white border border-gray-200 rounded-lg shadow-md">
+                <thead class="bg-blue-700 text-white">
                     <tr>
-                        <th class="border border-gray-300 px-4 py-2 text-center">No</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">NIS</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Nama</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Saldo</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Aksi</th>
+                        <th class="border px-4 py-2 text-center">No</th>
+                        <th class="border px-4 py-2 text-center">NIS</th>
+                        <th class="border px-4 py-2 text-center">Nama</th>
+                        <th class="border px-4 py-2 text-center">Saldo</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($siswa as $index => $item)
-                        <tr>
+                        <tr class="hover:bg-gray-100 cursor-pointer"
+                            data-id="{{ $item->id }}"
+                            data-nis="{{ $item->nis }}"
+                            data-nama="{{ $item->nama }}"
+                            data-saldo="{{ optional($item->tabungan)->saldo ?? 0 }}">
                             <td class="border px-4 py-2 text-center">{{ $index + 1 }}</td>
                             <td class="border px-4 py-2 text-center">{{ $item->nis }}</td>
                             <td class="border px-4 py-2">{{ $item->nama }}</td>
-                            <td class="border px-4 py-2">
-                                Rp{{ number_format(optional($item->tabungan)->saldo ?? 0, 0, ',', '.') }}
-                            </td>
                             <td class="border px-4 py-2 text-center">
-                                <a href="{{ route('penarikan.create', $item->id) }}"
-                                class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 text-sm rounded inline-flex items-center space-x-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                        class="bi bi-box-arrow-up-left" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd"
-                                            d="M7.364 3.5a.5.5 0 0 1 .5-.5H14.5A1.5 1.5 0 0 1 16 4.5v10a1.5 1.5 0 0 1-1.5 1.5h-10A1.5 1.5 0 0 1 3 14.5V7.864a.5.5 0 1 1 1 0V14.5a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5v-10a.5.5 0 0 0-.5-.5H7.864a.5.5 0 0 1-.5-.5"/>
-                                        <path fill-rule="evenodd"
-                                            d="M0 .5A.5.5 0 0 1 .5 0h5a.5.5 0 0 1 0 1H1.707l8.147 8.146a.5.5 0 0 1-.708.708L1 1.707V5.5a.5.5 0 0 1-1 0z"/>
-                                    </svg>
-                                    <span>Tarik Saldo</span>
-                                </a>
+                                Rp{{ number_format(optional($item->tabungan)->saldo ?? 0, 0, ',', '.') }}
                             </td>
                         </tr>
                     @endforeach
@@ -70,15 +106,29 @@
             </table>
         </div>
     </div>
-     @push('scripts')
-    <script>
-        const input = document.getElementById('search-input');
-        const form = document.getElementById('search-form');
 
-        input.addEventListener('input', function () {
-            if (this.value.trim() === '') {
-                form.submit(); 
-            }
+    @push('scripts')
+    <script>
+        const rows = document.querySelectorAll('tbody tr');
+        const siswaId = document.getElementById('siswa_id');
+        const nisInput = document.getElementById('nis');
+        const namaInput = document.getElementById('nama');
+        const saldoInput = document.getElementById('saldo');
+        const tarikBtn = document.getElementById('tarikBtn');
+
+        rows.forEach(row => {
+            row.addEventListener('click', () => {
+                siswaId.value = row.dataset.id;
+                nisInput.value = row.dataset.nis;
+                namaInput.value = row.dataset.nama;
+                saldoInput.value = 'Rp ' + Number(row.dataset.saldo).toLocaleString('id-ID');
+
+                tarikBtn.disabled = false;
+
+                // Highlight baris yang dipilih
+                rows.forEach(r => r.classList.remove('bg-yellow-100'));
+                row.classList.add('bg-yellow-100');
+            });
         });
     </script>
     @endpush
