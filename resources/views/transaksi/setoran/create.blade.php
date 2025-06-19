@@ -24,7 +24,7 @@
             @csrf
 
             <div>
-                <label for="nis" class="block font-medium">NIS</label>
+                <label for="nis" class="block font-medium">NISN</label>
                 <input type="text" name="nis" id="nis" required value="{{ old('nis') }}"
                     class="w-full border rounded px-3 py-2 focus:outline-none focus:ring" autocomplete="off" />
                 @error('nis') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror

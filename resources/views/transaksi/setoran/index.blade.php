@@ -25,7 +25,7 @@
                 <thead class="bg-blue-700 text-white">
                     <tr>
                         <th class="border px-4 py-2 text-center">No</th>
-                        <th class="border px-4 py-2 text-center">NIS</th>
+                        <th class="border px-4 py-2 text-center">NISN</th>
                         <th class="border px-4 py-2 text-center">Nama</th>
                         <th class="border px-4 py-2 text-center">Kelas</th>
                         <th class="border px-4 py-2 text-center">Nominal Setoran</th>

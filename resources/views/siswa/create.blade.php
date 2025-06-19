@@ -25,7 +25,7 @@
             <form action="{{ route('siswa.store') }}" method="POST">
                 @csrf
                 <div class="mb-4">
-                    <label for="nis" class="block font-medium text-gray-700">NIS</label>
+                    <label for="nis" class="block font-medium text-gray-700">NISN</label>
                     <input type="text" name="nis" id="nis" value="{{ old('nis') }}" required
                         class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-300">
                 </div>

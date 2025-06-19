@@ -11,12 +11,12 @@
                 <h3 class="text-lg font-semibold">Jumlah Siswa Menabung</h3>
                 <p class="text-3xl font-bold text-blue-600">{{ $jumlahSiswa }}</p>
             </div>
-
             <div class="bg-white rounded-lg shadow p-6 text-center">
-                <h3 class="text-lg font-semibold">Transaksi Tabungan Hari Ini</h3>
-                <p class="text-3xl font-bold text-green-600">{{ $transaksiHariIni }}</p>
+                <h3 class="text-lg font-semibold">Total Tabungan Hari Ini</h3>
+                <p class="text-3xl font-bold text-green-600">
+                    Rp {{ number_format($totalNominalTabunganHariIni, 0, ',', '.') }}
+                </p>
             </div>
-
             <div class="bg-white rounded-lg shadow p-6 text-center">
                 <h3 class="text-lg font-semibold">Penjualan Hari Ini</h3>
                 <p class="text-3xl font-bold text-red-600">{{ $penjualanHariIni }}</p>

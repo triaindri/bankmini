@@ -28,7 +28,7 @@
                 @method('PUT')
 
                 <div class="mb-4">
-                    <label class="block font-semibold">NIS</label>
+                    <label class="block font-semibold">NISN</label>
                     <input type="text" name="nis" value="{{ old('nis', $siswa->nis) }}" class="w-full border rounded px-3 py-2 bg-gray-100" readonly>
                 </div>
 

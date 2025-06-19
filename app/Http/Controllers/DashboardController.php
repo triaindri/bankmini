@@ -16,8 +16,8 @@ class DashboardController extends Controller
         // Hitung jumlah siswa yang menabung (misal semua siswa)
         $jumlahSiswa = Siswa::count();
 
-        // Transaksi tabungan hari ini
-        $transaksiHariIni = TransaksiTabungan::whereDate('tanggal', Carbon::today())->count();
+        // total tabungan
+        $totalNominalTabunganHariIni = TransaksiTabungan::whereDate('tanggal', Carbon::today())->sum('jumlah');
 
         // Penjualan hari ini
         $penjualanHariIni = Penjualan::whereDate('tanggal', Carbon::today())->count();
@@ -43,7 +43,7 @@ class DashboardController extends Controller
         ->get();
 
         return view('dashboard', compact(
-            'jumlahSiswa', 'transaksiHariIni', 'penjualanHariIni', 'transaksiMingguan', 'penjualanMingguan'
+            'jumlahSiswa', 'totalNominalTabunganHariIni', 'penjualanHariIni', 'transaksiMingguan', 'penjualanMingguan'
         ));
     }
 }
