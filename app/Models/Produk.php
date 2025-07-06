@@ -10,8 +10,8 @@ class Produk extends Model
 
     protected $fillable = ['nama', 'harga_beli','harga_jual', 'stok'];
 
-    public function transaksiAtk()
+    public function detailPenjualan()
     {
-        return $this->hasMany(TransaksiAtk::class);
+        return $this->hasMany(DetailPenjualan::class);
     }
 }

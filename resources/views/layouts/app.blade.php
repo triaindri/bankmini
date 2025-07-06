@@ -31,7 +31,7 @@
                 <a href="{{ route('siswa.index') }}" class="block text-white dark:text-gray-200">Data Siswa</a>
                 <a href="{{ route('setoran.index') }}" class="block text-white dark:text-gray-200">Setoran Tabungan</a>
                 <a href="{{ route('penarikan.index') }}" class="block text-white dark:text-gray-200">Penarikan Tabungan</a>
-                <a href="{{ route('produk.index') }}" class="block text-white dark:text-gray-200">Manajemen Produk</a>
+                <a href="{{ route('produk.index') }}" class="block text-white dark:text-gray-200">Produk</a>
             </nav>
 
             <!-- Profil dan Logout -->

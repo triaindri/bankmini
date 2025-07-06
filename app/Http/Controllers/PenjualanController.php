@@ -34,7 +34,7 @@ class PenjualanController extends Controller
         foreach ($request->produk_id as $key => $produk_id) {
             $produk = Produk::findOrFail($produk_id);
             $jumlah = $request->jumlah[$key];
-            $subtotal = $produk->harga * $jumlah;
+            $subtotal = $produk->harga_jual * $jumlah;
 
             $total += $subtotal;
 

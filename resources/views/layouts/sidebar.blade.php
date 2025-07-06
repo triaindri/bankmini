@@ -1,5 +1,3 @@
-<!-- resources/views/layouts/sidebar.blade.php -->
-
 <div class="w-64 bg-blue-900 border-r border-gray-200 min-h-screen p-4 hidden sm:block">
     <div class="text-xl text-center font-bold mb-6 text-white">Menu</div>
     <ul class="space-y-2">

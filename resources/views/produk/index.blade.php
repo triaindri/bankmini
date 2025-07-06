@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl px-1 py-2 text-white leading-tight">Manajemen Produk</h2>
+        <h2 class="font-semibold text-xl px-1 py-2 text-white leading-tight">Daftar Produk</h2>
     </x-slot>
     <main class="py-3 max-w-7xl mx-auto">
         <div class="bg-white p-6 rounded shadow overflow-x-auto">
@@ -28,10 +28,6 @@
                         <div class="form-group">
                             <label>Harga Jual :</label>
                             <input type="number" name="harga_jual" step="500" min="500" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Stok :</label>
-                            <input type="number" name="stok" required>
                         </div>
                     </div>
                 </div>
@@ -66,7 +62,6 @@
                         <th class="border border-gray-300 px-4 py-2 text-center">Nama Produk</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Harga Beli</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Harga Jual</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Stok</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -76,7 +71,6 @@
                             <td class="px-4 py-2 border">{{ $item->nama }}</td>
                             <td class="px-4 py-2 border">Rp {{ number_format($item->harga_beli, 0, ',', '.') }}</td>
                             <td class="px-4 py-2 border">Rp {{ number_format($item->harga_jual, 0, ',', '.') }}</td>
-                            <td class="px-4 py-2 border text-center">{{ $item->stok }}</td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -105,7 +99,7 @@
                 form.nama.value = row.dataset.nama;
                 form.harga_beli.value = row.dataset.harga_beli;
                 form.harga_jual.value = row.dataset.harga_jual;
-                form.stok.value = row.dataset.stok;
+                
 
                 // Nama produk tidak boleh diedit saat edit
                 form.nama.setAttribute('readonly', true);

@@ -27,7 +27,7 @@
                     @endif
                     @if(Auth::user()->role === 'petugas')
                     <x-nav-link :href="route('produk.index')" :active="request()->routeIs('produk.index')">
-                        {{ __('Manajemen Produk') }}
+                        {{ __('Produk') }}
                     </x-nav-link>
                     @endif
                 </div>
@@ -97,7 +97,7 @@
             @endif
             @if(Auth::user()->role === 'petugas')
             <x-responsive-nav-link :href="route('produk.index')" :active="request()->routeIs('produk.index')">
-                {{ __('Manajemen Produk') }}
+                {{ __('Produk') }}
             </x-responsive-nav-link>
             @endif
         </div>

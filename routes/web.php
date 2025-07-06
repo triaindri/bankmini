@@ -8,6 +8,7 @@ use App\Http\Controllers\KoreksiSaldoController;
 use App\Http\Controllers\TransaksiPenarikanController;
 use App\Http\Controllers\PenjualanController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\ProdukController;
 
 
@@ -61,5 +62,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/produk', [ProdukController::class, 'store'])->name('produk.store');
     Route::put('/produk/{id}', [ProdukController::class, 'update'])->name('produk.update');
     Route::delete('/produk/{id}', [ProdukController::class, 'destroy'])->name('produk.destroy');
+    Route::get('pembelian', [PembelianController::class, 'index'])->name('pembelian.index');
+    Route::post('pembelian', [PembelianController::class, 'store'])->name('pembelian.store');
 });
 require __DIR__.'/auth.php';

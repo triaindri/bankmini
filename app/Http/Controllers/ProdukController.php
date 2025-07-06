@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Produk;
+use App\Models\Pembelian;
 
 class ProdukController extends Controller
 {
@@ -50,5 +51,4 @@ class ProdukController extends Controller
 
         return redirect()->route('produk.index')->with('success', 'Produk berhasil dihapus.');
     }
-
 }
