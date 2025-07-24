@@ -17,10 +17,10 @@
                     Rp {{ number_format($totalNominalTabunganHariIni, 0, ',', '.') }}
                 </p>
             </div>
-            <div class="bg-white rounded-lg shadow p-6 text-center">
+            <!-- <div class="bg-white rounded-lg shadow p-6 text-center">
                 <h3 class="text-lg font-semibold">Penjualan Hari Ini</h3>
                 <p class="text-3xl font-bold text-red-600">{{ $penjualanHariIni }}</p>
-            </div>
+            </div> -->
         </div>
 
         {{-- Grafik --}}

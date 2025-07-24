@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('pembelians', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('produk_id')->constrained()->onDelete('cascade');
+            $table->foreignId('produk_id')->constrained('produk')->onDelete('cascade');
             $table->integer('jumlah');
             $table->timestamps();
         });

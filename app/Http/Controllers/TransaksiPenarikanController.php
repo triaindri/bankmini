@@ -51,12 +51,19 @@ class TransaksiPenarikanController extends Controller
         try {
             $tabungan = Tabungan::where('siswa_id', $request->siswa_id)->firstOrFail();
 
+            $status = $request->jenis === 'Pembelian ATK' ? 'disetujui' : 'pending';
+
+            // Jika langsung disetujui, periksa saldo dan kurangi
             if ($tabungan->saldo < $request->jumlah) {
-                return back()->withErrors(['jumlah' => 'Saldo tidak cukup untuk melakukan penarikan.']);
+                return redirect()->route('penarikan.index')->with('error', 'Saldo tidak mencukupi untuk melakukan penarikan.');
             }
 
-            $tabungan->saldo -= $request->jumlah;
-            $tabungan->save();
+
+            // Jika langsung disetujui, potong saldo
+            if ($status === 'disetujui') {
+                $tabungan->saldo -= $request->jumlah;
+                $tabungan->save();
+            }
 
             Transaksitabungan::create([
                 'tabungan_id' => $tabungan->id,
@@ -65,11 +72,16 @@ class TransaksiPenarikanController extends Controller
                 'tanggal' => now(),
                 'keterangan' => $request->jenis,
                 'user_id' => Auth::id(),
+                'status' => $status,
             ]);
 
             DB::commit();
 
-            return redirect()->route('penarikan.index')->with('success', 'Penarikan berhasil dicatat.');
+            return redirect()->route('penarikan.index')->with('success',
+                $status === 'pending'
+                    ? 'Penarikan berhasil dicatat dan menunggu persetujuan koordinator.'
+                    : 'Penarikan berhasil diproses.'
+            );
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
