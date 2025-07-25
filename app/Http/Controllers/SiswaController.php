@@ -20,6 +20,10 @@ class SiswaController extends Controller
             'kelas' => 'required|string|max:50',
             'alamat' => 'required|string|max:255',
             'jeniskelamin' => 'required|in:perempuan,laki-laki',
+            'email' => 'nullable|email',
+            'telepon' => 'nullable|string|max:20',
+            'tempat_lahir' => 'nullable|string|max:100',
+            'tanggal_lahir' => 'nullable|date',
         ]);
 
         $siswa = Siswa::create([
@@ -28,6 +32,10 @@ class SiswaController extends Controller
             'kelas' => $request->kelas,
             'alamat' => $request->alamat,
             'jeniskelamin' => $request->jeniskelamin,
+            'email' => $request->email,
+            'telepon' => $request->telepon,
+            'tempat_lahir' => $request->tempat_lahir,
+            'tanggal_lahir' => $request->tanggal_lahir,
         ]);
 
         // Tambahkan tabungan awal dengan saldo 0
@@ -67,6 +75,10 @@ class SiswaController extends Controller
             'kelas' => 'required|string|max:50',
             'alamat' => 'required|string|max:255',
             'jeniskelamin' => 'required|in:perempuan,laki-laki',
+            'email' => 'nullable|email',
+            'telepon' => 'nullable|string|max:20',
+            'tempat_lahir' => 'nullable|string|max:100',
+            'tanggal_lahir' => 'nullable|date',
         ]);
 
         $siswa->update([
@@ -75,9 +87,13 @@ class SiswaController extends Controller
             'kelas' => $request->kelas,
             'alamat' => $request->alamat,
             'jeniskelamin' => $request->jeniskelamin,
+            'email' => $request->email,
+            'telepon' => $request->telepon,
+            'tempat_lahir' => $request->tempat_lahir,
+            'tanggal_lahir' => $request->tanggal_lahir,
         ]);
+        return redirect()->route('siswa.show', $siswa->id)->with('success', 'Data berhasil diperbarui');
 
-        return redirect()->route('siswa.index')->with('success', 'Data siswa berhasil diperbarui.');
     }
 
     public function destroy($id)
@@ -87,4 +103,11 @@ class SiswaController extends Controller
 
         return redirect()->route('siswa.index')->with('success', 'Data siswa berhasil dihapus.');
     }
+
+    public function show($id)
+    {
+        $siswa = Siswa::with('tabungan')->findOrFail($id); // pastikan include relasi jika perlu
+        return view('siswa.show', compact('siswa'));
+    }
+
 }

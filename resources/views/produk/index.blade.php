@@ -10,7 +10,7 @@
                 </div>
             @endif
             {{-- Form Tambah Produk --}}
-            <form id="formProduk" action="{{ route('produk.store') }}" method="POST" style="margin-bottom: 15px;">
+            <form id="formProduk" action="{{ route('produk.store') }}" method="POST" style="margin-bottom: 15px;" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" id="produk_id" name="produk_id">
                 <div class="form-grid">
@@ -28,6 +28,10 @@
                         <div class="form-group">
                             <label>Harga Jual :</label>
                             <input type="number" name="harga_jual" step="500" min="500" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Gambar :</label>
+                            <input type="file" name="gambar" accept="image/*">
                         </div>
                     </div>
                 </div>
@@ -53,6 +57,9 @@
                         </svg>
                         Hapus
                     </x-danger-button>
+                    <x-secondary-button id="resetBtn" class="bg-gray-400 text-white hover:bg-gray-700 px-4 py-2 rounded flex items-center gap-2">
+                        Batal
+                    </x-secondary-button>
                 </div>
             </form>
             <table class="table-auto w-full bg-white border dark:bg-gray-400 border-gray-200 rounded-lg shadow-md text-sm">
@@ -62,15 +69,23 @@
                         <th class="border border-gray-300 px-4 py-2 text-center">Nama Produk</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Harga Beli</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Harga Jual</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Gambar</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($produk as $index => $item)
                         <tr class="cursor-pointer hover:bg-gray-200" data-id="{{ $item->id }}" data-nama="{{ $item->nama }}" data-harga_beli="{{ $item->harga_beli }}" data-harga_jual="{{ $item->harga_jual }}" data-stok="{{ $item->stok }}">
                             <td class="px-4 py-2 border text-center">{{ $index + 1 }}</td>
-                            <td class="px-4 py-2 border">{{ $item->nama }}</td>
-                            <td class="px-4 py-2 border">Rp {{ number_format($item->harga_beli, 0, ',', '.') }}</td>
-                            <td class="px-4 py-2 border">Rp {{ number_format($item->harga_jual, 0, ',', '.') }}</td>
+                            <td class="px-4 py-2 border nama">{{ $item->nama }}</td>
+                            <td class="px-4 py-2 border harga-beli">Rp {{ number_format($item->harga_beli, 0, ',', '.') }}</td>
+                            <td class="px-4 py-2 border harga-jual">Rp {{ number_format($item->harga_jual, 0, ',', '.') }}</td>
+                            <td class="px-4 py-2 border">
+                                @if($item->gambar)
+                                    <img src="{{ asset('storage/' . $item->gambar) }}" alt="gambar produk" class="w-16 h-16 object-cover rounded">
+                                @else
+                                    <span class="text-gray-400 text-xs">Tidak ada</span>
+                                @endif
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -79,87 +94,99 @@
     </main>
     @push('scripts')
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const rows = document.querySelectorAll('tbody tr');
-        const form = document.getElementById('formProduk');
-        const editBtn = document.getElementById('editBtn');
-        const deleteBtn = document.getElementById('deleteBtn');
+        document.addEventListener('DOMContentLoaded', function () {
+            const rows = document.querySelectorAll('tbody tr');
+            const form = document.querySelector('form');
+            const editBtn = document.getElementById('editBtn');
+            const deleteBtn = document.getElementById('deleteBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const formTitle = document.getElementById('formTitle');
+            const previewImage = document.getElementById('previewImage');
+            const inputGambar = document.getElementById('gambar');
+            let selectedRow = null;
+            let selectedId = null;
 
-        let selectedRow = null;
+            // Fungsi saat klik baris tabel
+            rows.forEach(row => {
+                row.addEventListener('click', function () {
+                    rows.forEach(r => r.classList.remove('bg-yellow-100'));
 
-        rows.forEach(row => {
-            row.addEventListener('click', () => {
-                // Tandai baris yang dipilih
-                if (selectedRow) selectedRow.classList.remove('bg-yellow-100');
-                selectedRow = row;
-                selectedRow.classList.add('bg-yellow-100');
+                    this.classList.add('bg-yellow-100');
+                    selectedRow = this;
+                    selectedId = this.dataset.id;
 
-                // Isi form dengan data produk
-                form.produk_id.value = row.dataset.id;
-                form.nama.value = row.dataset.nama;
-                form.harga_beli.value = row.dataset.harga_beli;
-                form.harga_jual.value = row.dataset.harga_jual;
-                
+                    const nama = this.querySelector('.nama').textContent.trim();
+                    const hargaBeli = this.querySelector('.harga-beli').textContent.trim();
+                    const hargaJual = this.querySelector('.harga-jual').textContent.trim();
 
-                // Nama produk tidak boleh diedit saat edit
-                form.nama.setAttribute('readonly', true);
+                    form.nama.value = nama;
+                    form.harga_beli.value = hargaBeli;
+                    form.harga_jual.value = hargaJual;
+                    form.nama.setAttribute('readonly', true);
 
-                // Enable tombol edit dan hapus
-                editBtn.disabled = false;
-                deleteBtn.disabled = false;
+                    editBtn.disabled = false;
+                    deleteBtn.disabled = false;
+                });
+
+                // Tooltip saat hover
+                row.setAttribute('title', 'Klik 2x untuk lihat detail');
             });
-        });
 
-        // Edit button klik -> submit form ke route update (kamu perlu sediakan route update)
-        editBtn.addEventListener('click', () => {
-            if (!form.produk_id.value) return alert('Pilih produk terlebih dahulu.');
+            // Tombol Edit
+            editBtn.addEventListener('click', function () {
+                if (!selectedId) return;
 
-            // Ubah action form ke route update produk (pastikan route ini ada)
-            form.action = `/produk/${form.produk_id.value}`; // misal RESTful update route
-            form.method = 'POST';
+                formTitle.textContent = 'Edit Produk';
+                form.action = `/produk/${selectedId}`;
+                form.method = 'POST'; // tetap POST karena ada _method PUT
 
-            // Tambahkan _method PUT untuk Laravel
-            let methodInput = document.createElement('input');
-            methodInput.type = 'hidden';
-            methodInput.name = '_method';
-            methodInput.value = 'PUT';
+                // Tambahkan input _method=PUT
+                let methodInput = document.createElement('input');
+                methodInput.setAttribute('type', 'hidden');
+                methodInput.setAttribute('name', '_method');
+                methodInput.setAttribute('value', 'PUT');
+                form.appendChild(methodInput);
+            });
 
-            // Hapus dulu kalau ada input _method lama
-            const existingMethodInput = form.querySelector('input[name="_method"]');
-            if (existingMethodInput) existingMethodInput.remove();
-            form.appendChild(methodInput);
+            // Tombol Reset/Batal (kembali ke mode tambah)
+            resetBtn.addEventListener('click', function () {
+                form.reset();
+                formTitle.textContent = 'Tambah Produk';
+                form.action = "{{ route('produk.store') }}";
+                form.method = 'POST';
+                form.nama.removeAttribute('readonly');
 
-            form.submit();
-        });
+                // Hapus _method PUT jika ada
+                const methodInput = form.querySelector('input[name="_method"]');
+                if (methodInput) methodInput.remove();
 
-        // Hapus button klik -> konfirmasi lalu submit ke route delete
-        deleteBtn.addEventListener('click', () => {
-            if (!form.produk_id.value) return alert('Pilih produk terlebih dahulu.');
+                // Reset gambar preview
+                if (previewImage) previewImage.src = '';
 
-            if (confirm('Yakin ingin menghapus produk ini?')) {
-                // Buat form baru untuk delete (karena form utama method POST)
-                const deleteForm = document.createElement('form');
-                deleteForm.action = `/produk/${form.produk_id.value}`;
-                deleteForm.method = 'POST';
+                // Reset seleksi baris
+                if (selectedRow) selectedRow.classList.remove('bg-yellow-100');
+                selectedRow = null;
+                selectedId = null;
 
-                const csrfInput = document.createElement('input');
-                csrfInput.type = 'hidden';
-                csrfInput.name = '_token';
-                csrfInput.value = '{{ csrf_token() }}';
+                editBtn.disabled = true;
+                deleteBtn.disabled = true;
+            });
 
-                const methodInput = document.createElement('input');
-                methodInput.type = 'hidden';
-                methodInput.name = '_method';
-                methodInput.value = 'DELETE';
-
-                deleteForm.appendChild(csrfInput);
-                deleteForm.appendChild(methodInput);
-
-                document.body.appendChild(deleteForm);
-                deleteForm.submit();
+            // Preview gambar saat file dipilih
+            if (inputGambar) {
+                inputGambar.addEventListener('change', function () {
+                    if (this.files && this.files[0]) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            if (previewImage) {
+                                previewImage.src = e.target.result;
+                            }
+                        };
+                        reader.readAsDataURL(this.files[0]);
+                    }
+                });
             }
         });
-    });
     </script>
     @endpush
 </x-app-layout>

@@ -2,51 +2,84 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Produk;
-use App\Models\Pembelian;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProdukController extends Controller
 {
+    /**
+     * Menampilkan daftar produk.
+     */
     public function index()
     {
-        $produk = Produk::all();
+        $produk = Produk::orderBy('created_at', 'desc')->get();
         return view('produk.index', compact('produk'));
     }
 
+    /**
+     * Menyimpan produk baru.
+     */
     public function store(Request $request)
     {
-        $request->validate([
-            'nama' => 'required',
-            'harga_beli' => ['required', 'numeric', 'min:500', function ($attribute, $value, $fail) {
-                if ($value % 500 !== 0) {
-                    $fail('Harga harus kelipatan 500.');
-                }
-            }],
-            'harga_jual' => ['required', 'numeric', 'min:500', function ($attribute, $value, $fail) {
-                if ($value % 500 !== 0) {
-                    $fail('Harga harus kelipatan 500.');
-                }
-            }],
+        $validated = $request->validate([
+            'nama' => 'required|string|max:255',
+            'harga_beli' => 'required|numeric',
+            'harga_jual' => 'required|numeric',
             'stok' => 'required|integer',
+            'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        Produk::create($request->all());
+        if ($request->hasFile('gambar')) {
+            $validated['gambar'] = $request->file('gambar')->store('produk', 'public');
+        }
 
-        return redirect()->back()->with('success', 'Produk berhasil ditambahkan');
+        Produk::create($validated);
+
+        return redirect()->route('produk.index')->with('success', 'Produk berhasil ditambahkan.');
     }
-    public function update(Request $request, $id) {
+
+    /**
+     * Update produk yang ada.
+     */
+    public function update(Request $request, $id)
+    {
         $produk = Produk::findOrFail($id);
-        $produk->harga_beli = $request->harga_beli;
-        $produk->harga_jual = $request->harga_jual;
-        $produk->stok = $request->stok;
-        $produk->save();
+
+        $validated = $request->validate([
+            'nama' => 'required|string|max:255',
+            'harga_beli' => 'required|numeric',
+            'harga_jual' => 'required|numeric',
+            'stok' => 'required|integer',
+            'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        if ($request->hasFile('gambar')) {
+            // Hapus gambar lama jika ada
+            if ($produk->gambar && Storage::disk('public')->exists($produk->gambar)) {
+                Storage::disk('public')->delete($produk->gambar);
+            }
+
+            $validated['gambar'] = $request->file('gambar')->store('produk', 'public');
+        }
+
+        $produk->update($validated);
 
         return redirect()->route('produk.index')->with('success', 'Produk berhasil diupdate.');
     }
 
-    public function destroy($id) {
+    /**
+     * Hapus produk.
+     */
+    public function destroy($id)
+    {
         $produk = Produk::findOrFail($id);
+
+        // Hapus gambar jika ada
+        if ($produk->gambar && Storage::disk('public')->exists($produk->gambar)) {
+            Storage::disk('public')->delete($produk->gambar);
+        }
+
         $produk->delete();
 
         return redirect()->route('produk.index')->with('success', 'Produk berhasil dihapus.');
