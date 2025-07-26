@@ -31,7 +31,7 @@
                 </div>
             @endif
             <div class="flex items-center justify-between mb-4">
-                 <a href="{{ route('siswa.create') }}"
+                <a href="{{ route('siswa.create') }}"
                     class="bg-green-500 text-white px-3 py-2 rounded text-sm hover:bg-green-600 flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                         class="bi bi-plus-circle" viewBox="0 0 16 16">
