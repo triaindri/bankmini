@@ -1,36 +1,55 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-xl font-semibold">Tambah Penjualan</h2>
+        <h2 class="font-semibold text-xl text-white leading-tight">Transaksi Penjualan</h2>
     </x-slot>
 
-    <div class="max-w-4xl mx-auto bg-white p-6 rounded shadow mt-6">
-        <form action="{{ route('penjualan.store') }}" method="POST">
-            @csrf
-
-            <div id="produk-list">
-                <div class="flex space-x-4 mb-4">
-                    <select name="produk_id[]" class="border rounded px-2 py-1 w-1/2">
-                        @foreach($produks as $produk)
-                            <option value="{{ $produk->id }}">{{ $produk->nama }} (Rp{{ number_format($produk->harga) }})</option>
-                        @endforeach
-                    </select>
-                    <input type="number" name="jumlah[]" min="1" placeholder="Jumlah" class="border rounded px-2 py-1 w-1/4">
+    <main class="py-6 max-w-4xl mx-auto">
+        <div class="bg-white p-6 rounded shadow">
+            @if(session('success'))
+                <div class="bg-green-100 border border-green-400 text-green-700 p-2 rounded mb-4">
+                    {{ session('success') }}
                 </div>
-            </div>
+            @endif
 
-            <button type="button" onclick="tambahProduk()" class="bg-gray-300 px-3 py-1 rounded text-sm">+ Produk</button>
+            <form method="POST" action="{{ route('penjualan.store') }}">
+                @csrf
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label>Produk</label>
+                        <select name="produk_id" class="w-full border rounded">
+                            @foreach($produk as $p)
+                                <option value="{{ $p->id }}">{{ $p->nama }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label>Jumlah</label>
+                        <input type="number" name="jumlah" class="w-full border rounded" min="1" required>
+                    </div>
+                    <div>
+                        <label>Tanggal</label>
+                        <input type="date" name="tanggal" class="w-full border rounded" value="{{ date('Y-m-d') }}">
+                    </div>
+                    <div>
+                        <label>Metode Bayar</label>
+                        <select name="metode_bayar" class="w-full border rounded">
+                            <option value="cash">Cash</option>
+                            <option value="tabungan">Tabungan</option>
+                        </select>
+                    </div>
+                    <div class="col-span-2">
+                        <label>Siswa (jika metode tabungan)</label>
+                        <select name="siswa_id" class="w-full border rounded">
+                            <option value="">-- Pilih Siswa --</option>
+                            @foreach($siswa as $s)
+                                <option value="{{ $s->id }}">{{ $s->nama }} ({{ $s->kelas }})</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
 
-            <div class="mt-4">
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Simpan Penjualan</button>
-            </div>
-        </form>
-    </div>
-
-    <script>
-        function tambahProduk() {
-            const container = document.getElementById('produk-list');
-            const clone = container.children[0].cloneNode(true);
-            container.appendChild(clone);
-        }
-    </script>
+                <x-primary-button>Proses</x-primary-button>
+            </form>
+        </div>
+    </main>
 </x-app-layout>

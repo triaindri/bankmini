@@ -53,17 +53,23 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/penjualan', [PenjualanController::class, 'index'])->name('penjualan.index');
-    Route::get('/penjualan/create', [PenjualanController::class, 'create'])->name('penjualan.create');
+    Route::get('/penjualan', [PenjualanController::class, 'create'])->name('penjualan.create');
     Route::post('/penjualan', [PenjualanController::class, 'store'])->name('penjualan.store');
 });
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/produk', [ProdukController::class, 'index'])->name('produk.index');
     Route::post('/produk', [ProdukController::class, 'store'])->name('produk.store');
+    Route::get('/produk/{id}/edit', [ProdukController::class, 'edit'])->name('produk.edit');
     Route::put('/produk/{id}', [ProdukController::class, 'update'])->name('produk.update');
     Route::delete('/produk/{id}', [ProdukController::class, 'destroy'])->name('produk.destroy');
-    Route::get('pembelian', [PembelianController::class, 'index'])->name('pembelian.index');
-    Route::post('pembelian', [PembelianController::class, 'store'])->name('pembelian.store');
 });
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/pembelian', [PembelianController::class, 'create'])->name('pembelian.create');
+    Route::post('/pembelian', [PembelianController::class, 'store'])->name('pembelian.store');
+    Route::put('/pembelian/{id}', [PembelianController::class, 'update'])->name('pembelian.update');
+    Route::delete('/pembelian/{id}', [PembelianController::class, 'destroy'])->name('pembelian.destroy');
+});
+
 require __DIR__.'/auth.php';

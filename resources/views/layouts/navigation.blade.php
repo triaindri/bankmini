@@ -30,6 +30,11 @@
                         {{ __('Produk') }}
                     </x-nav-link>
                     @endif
+                    @if(Auth::user()->role === 'petugas')
+                    <x-nav-link :href="route('penjualan.index')" :active="request()->routeIs('penjualan.index')">
+                        {{ __('Transaksi Penjualan') }}
+                    </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -98,6 +103,11 @@
             @if(Auth::user()->role === 'petugas')
             <x-responsive-nav-link :href="route('produk.index')" :active="request()->routeIs('produk.index')">
                 {{ __('Produk') }}
+            </x-responsive-nav-link>
+            @endif
+            @if(Auth::user()->role === 'petugas')
+            <x-responsive-nav-link :href="route('penjualan.index')" :active="request()->routeIs('penjualan.index')">
+                {{ __('Transkasi Penjualan') }}
             </x-responsive-nav-link>
             @endif
         </div>

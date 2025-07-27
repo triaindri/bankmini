@@ -55,7 +55,7 @@ class TransaksiPenarikanController extends Controller
 
             // Jika langsung disetujui, periksa saldo dan kurangi
             if ($tabungan->saldo < $request->jumlah) {
-                return redirect()->route('penarikan.index')->with('error', 'Saldo tidak mencukupi untuk melakukan penarikan.');
+                return back()->withInput()->with('error', 'Saldo tidak mencukupi untuk melakukan penarikan.');
             }
 
 

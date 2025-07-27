@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pembelian extends Model
 {
-    protected $fillable = ['produk_id', 'jumlah'];
+    protected $fillable = ['produk_id', 'jumlah', 'harga_beli', 'harga_jual'];
 
     public function produk()
     {

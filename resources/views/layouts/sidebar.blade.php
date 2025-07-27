@@ -27,6 +27,11 @@
                 Produk
             </a>
         </li>
+        <li>
+            <a href="{{ route('penjualan.index') }}" class="text-white block px-4 py-2 rounded hover:bg-blue-100 {{ request()->routeIs('penjualan.index') ? 'bg-blue-200 font-semibold' : '' }}">
+                Transaksi Penjualan
+            </a>
+        </li>
         @endif
     </ul>
 </div>

@@ -1,6 +1,29 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl px-1 py-2 text-white leading-tight">Daftar Produk</h2>
+   <x-slot name="header">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <h2 class="text-xl font-extrabold text-white">Pembelian Produk</h2>
+            <div class="mt-4 sm:mt-0 flex items-center space-x-2">
+                <!-- Form Pencarian -->
+                <form method="GET" action="{{ route('produk.index') }}" class="relative" id="search-form">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 pointer-events-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                            fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                            <path
+                                d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 
+                                1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 
+                                6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                        </svg>
+                    </div>
+                    <input type="text" name="q" id="search-input" value="{{ request('q') }}"
+                        placeholder="Cari nama produk"
+                        class="px-12 py-2 border rounded text-sm focus:outline-none focus:ring">
+                    <button type="submit"
+                        class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-sm">
+                        Cari
+                    </button>
+                </form>
+            </div>
+        </div>
     </x-slot>
 
     <main class="py-3 max-w-7xl mx-auto">
@@ -16,14 +39,19 @@
                 <input type="hidden" id="produk_id" name="produk_id">
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label>Nama :</label>
+                        <label>Nama Produk :</label>
                         <input type="text" name="nama" id="nama" required class="w-full border rounded px-2 py-1">
+
                         <label>Harga Beli :</label>
                         <input type="number" name="harga_beli" id="harga_beli" step="500" min="500" required class="w-full border rounded px-2 py-1">
+
+                        <label>Stok :</label>
+                        <input type="number" name="stok" id="stok" min="0" required class="w-full border rounded px-2 py-1">
                     </div>
                     <div>
                         <label>Harga Jual :</label>
                         <input type="number" name="harga_jual" id="harga_jual" step="500" min="500" required class="w-full border rounded px-2 py-1">
+
                         <label>Gambar :</label>
                         <input type="file" name="gambar" id="gambar" accept="image/*" class="w-full">
                         <img id="previewImage" src="" class="w-16 h-16 object-cover mt-2 hidden">
@@ -73,6 +101,7 @@
                         <th class="border px-4 py-2 text-center">Nama</th>
                         <th class="border px-4 py-2 text-center">Harga Beli</th>
                         <th class="border px-4 py-2 text-center">Harga Jual</th>
+                        <th class="border px-4 py-2 text-center">Stok</th>
                         <th class="border px-4 py-2 text-center">Gambar</th>
                     </tr>
                 </thead>
@@ -83,11 +112,13 @@
                             data-nama="{{ $item->nama }}"
                             data-harga_beli="{{ $item->harga_beli }}"
                             data-harga_jual="{{ $item->harga_jual }}"
+                            data-stok="{{ $item->stok }}"
                         >
                             <td class="border text-center px-4 py-2">{{ $index + 1 }}</td>
                             <td class="border px-4 py-2">{{ $item->nama }}</td>
                             <td class="border px-4 py-2">Rp {{ number_format($item->harga_beli, 0, ',', '.') }}</td>
                             <td class="border px-4 py-2">Rp {{ number_format($item->harga_jual, 0, ',', '.') }}</td>
+                            <td class="border text-center px-4 py-2">{{ $item->stok }}</td>
                             <td class="border px-4 py-2 text-center">
                                 @if($item->gambar)
                                     <img src="{{ asset('storage/' . $item->gambar) }}" class="w-12 h-12 object-cover rounded mx-auto">
@@ -122,34 +153,32 @@
 
             document.querySelectorAll('tbody tr').forEach(row => {
                 row.addEventListener('click', () => {
-                    document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('bg-blue-100'));
-                    row.classList.add('bg-blue-100');
+                document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('bg-blue-100'));
+                row.classList.add('bg-blue-100');
 
-                    selectedId = row.dataset.id;
-                    produkIdInput.value = selectedId;
-                    nama.value = row.dataset.nama;
-                    hargaBeli.value = row.dataset.harga_beli;
-                    hargaJual.value = row.dataset.harga_jual;
+                selectedId = row.dataset.id;
+                produkIdInput.value = selectedId;
 
-                    // Jangan set readonly kalau mau bisa ubah nama
-                    // nama.setAttribute('readonly', true);
+                nama.value = row.dataset.nama;
+                hargaBeli.value = row.dataset.harga_beli;
+                hargaJual.value = row.dataset.harga_jual;
 
-                    editBtn.disabled = false;
-                    deleteBtn.disabled = false;
+                const stok = document.getElementById('stok');
+                stok.value = row.dataset.stok; // <<< BARIS INI YANG PENTING
 
-                    // Set form action untuk update
-                    form.action = `/produk/${selectedId}`;
+                editBtn.disabled = false;
+                deleteBtn.disabled = false;
 
-                    // Tambah hidden input _method kalau belum ada
-                    let methodInput = form.querySelector('input[name="_method"]');
-                    if (!methodInput) {
-                        methodInput = document.createElement('input');
-                        methodInput.type = 'hidden';
-                        methodInput.name = '_method';
-                        form.appendChild(methodInput);
-                    }
-                    methodInput.value = 'PUT';
-                });
+                form.action = `/produk/${selectedId}`;
+                let methodInput = form.querySelector('input[name="_method"]');
+                if (!methodInput) {
+                    methodInput = document.createElement('input');
+                    methodInput.type = 'hidden';
+                    methodInput.name = '_method';
+                    form.appendChild(methodInput);
+                }
+                methodInput.value = 'PUT';
+            });
             });
 
             editBtn.addEventListener('click', function (e) {
