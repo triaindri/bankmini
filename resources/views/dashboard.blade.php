@@ -2,9 +2,9 @@
     <x-slot name="header">
         <h2 class="font-semibold text-xl px-1 py-2 text-white leading-tight">Dashboard</h2>
     </x-slot>
-
+    
     <div class="py-6 max-w-7xl mx-auto sm:px-6 lg:px-8">
-
+        @hasrole('koordinator|petugas')
         {{-- Card Summary --}}
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-10 mb-6">
             <div class="bg-white rounded-lg shadow p-6 text-center">
@@ -77,4 +77,54 @@
         });
     </script>
     @endpush
+    @endhasrole
+    @hasrole('siswa')
+    <div class="flex min-h-screen bg-blue-900 text-white">
+        <main class="flex-1 bg-blue-100 px-8 pt-1 p-8 text-gray-900">
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <h1 class="text-xl font-bold text-gray-800">
+                    Halo, {{ Auth::user()->name }}!
+                </h1>
+                <p class="mb-4 mt-3 text-gray-700">
+                    💰 Saldo tabungan Anda :
+                    <span class="font-semibold text-green-600">
+                        Rp {{ number_format($saldo ?? 0, 0, ',', '.') }}
+                    </span>
+                </p>
+                <p class="text-sm text-gray-500 text-right">
+                    Hari ini : {{ now()->translatedFormat('d F Y') }}
+                </p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6 mb-6">
+                <div class="bg-white rounded p-4 shadow">
+                    <p class="font-semibold">Setoran Bulan Ini</p>
+                    <p class="text-2xl font-bold text-blue-800">
+                        Rp {{ number_format($setoranBulanIni, 0, ',', '.') }}
+                    </p>
+                </div>
+                <div class="bg-white rounded p-4 shadow">
+                    <p class="font-semibold">Penarikan Bulan Ini</p>
+                    <p class="text-2xl font-bold text-green-600">
+                        Rp {{ number_format($penarikanBulanIni, 0, ',', '.') }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-blue-200 rounded p-4 shadow">
+                <p class="font-semibold text-red-600">📌 Transaksi Terakhir :</p>
+                @foreach ($transaksiTerakhir as $transaksi)
+                    <p>
+                        {{ ucfirst($transaksi->jenis) }} :
+                        Rp {{ number_format($transaksi->jumlah, 0, ',', '.') }}
+                        ( {{ $transaksi->created_at->translatedFormat('d F Y') }} )
+                        @if($transaksi->keterangan)
+                            - {{ $transaksi->keterangan }}
+                        @endif
+                    </p>
+                @endforeach
+            </div>
+        </main>
+    </div>
+    @endhasrole
 </x-app-layout>

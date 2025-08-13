@@ -20,8 +20,8 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'username',
         'email',
+        'username',
         'password',
         'role',
     ];
@@ -57,5 +57,10 @@ class User extends Authenticatable
     public function transaksiAtk()
     {
         return $this->hasMany(TransaksiAtk::class);
+    }
+
+    public function siswa()
+    {
+        return $this->hasOne(Siswa::class);
     }
 }

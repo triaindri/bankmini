@@ -12,7 +12,7 @@
 
     <div class="py-6 max-w-4xl mx-auto">
         <div class="bg-white p-6 rounded shadow">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm font-mono">
                 <div><strong>NISN :</strong> {{ $siswa->nis }}</div>
                 <div><strong>Nama :</strong> {{ $siswa->nama }}</div>
                 <div><strong>Kelas :</strong> {{ $siswa->kelas }}</div>

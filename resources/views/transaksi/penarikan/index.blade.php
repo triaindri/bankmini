@@ -38,7 +38,7 @@
 
             @if(session('error'))
                 <div class="bg-red-100 text-red-700 border border-red-300 px-4 py-2 rounded mb-4">
-                    <strong>Error:</strong> {{ session('error') }}
+                    {{ session('error') }}
                 </div>
             @endif
 

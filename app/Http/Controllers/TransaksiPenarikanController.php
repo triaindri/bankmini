@@ -31,9 +31,10 @@ class TransaksiPenarikanController extends Controller
 
     public function store(Request $request)
     {
+        // Validasi awal
         $request->validate([
             'siswa_id' => 'required|exists:siswa,id',
-            'jumlah' => [
+            'jumlah'   => [
                 'required',
                 'integer',
                 'min:500',
@@ -43,23 +44,31 @@ class TransaksiPenarikanController extends Controller
                     }
                 },
             ],
-            'jenis' => 'required|in:Pembelian ATK,Study Tour,Kenaikan Kelas',
+            'jenis'    => 'required|in:Pembelian ATK,Study Tour,Kenaikan Kelas',
         ]);
 
-        DB::beginTransaction();
-
         try {
-            $tabungan = Tabungan::where('siswa_id', $request->siswa_id)->firstOrFail();
+            DB::beginTransaction();
 
-            $status = $request->jenis === 'Pembelian ATK' ? 'disetujui' : 'pending';
+            $tabungan = Tabungan::where('siswa_id', $request->siswa_id)->first();
 
-            // Jika langsung disetujui, periksa saldo dan kurangi
-            if ($tabungan->saldo < $request->jumlah) {
-                return back()->withInput()->with('error', 'Saldo tidak mencukupi untuk melakukan penarikan.');
+            // Kalau siswa belum punya tabungan atau saldonya 0
+            if (!$tabungan || $tabungan->saldo <= 0) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'Saldo tabungan siswa ini masih 0.');
             }
 
+            // Periksa saldo cukup atau tidak
+            if ($tabungan->saldo < $request->jumlah) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'Saldo tidak mencukupi untuk melakukan penarikan.');
+            }
 
-            // Jika langsung disetujui, potong saldo
+            // Status otomatis disetujui jika Pembelian ATK
+            $status = $request->jenis === 'Pembelian ATK' ? 'disetujui' : 'pending';
+
             if ($status === 'disetujui') {
                 $tabungan->saldo -= $request->jumlah;
                 $tabungan->save();
@@ -67,27 +76,30 @@ class TransaksiPenarikanController extends Controller
 
             Transaksitabungan::create([
                 'tabungan_id' => $tabungan->id,
-                'jenis' => 'tarik',
-                'jumlah' => $request->jumlah,
-                'tanggal' => now(),
-                'keterangan' => $request->jenis,
-                'user_id' => Auth::id(),
-                'status' => $status,
+                'jenis'       => 'tarik',
+                'jumlah'      => $request->jumlah,
+                'tanggal'     => now(),
+                'keterangan'  => $request->jenis,
+                'user_id'     => Auth::id(),
+                'status'      => $status,
             ]);
 
             DB::commit();
 
-            return redirect()->route('penarikan.index')->with('success',
+            return redirect()->route('penarikan.index')->with(
+                'success',
                 $status === 'pending'
                     ? 'Penarikan berhasil dicatat dan menunggu persetujuan koordinator.'
                     : 'Penarikan berhasil diproses.'
             );
+
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
+            return back()
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
-
     public function create($siswa_id)
     {
         $siswa = Siswa::with('tabungan')->findOrFail($siswa_id);

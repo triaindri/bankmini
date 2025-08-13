@@ -8,42 +8,47 @@ use App\Models\Transaksitabungan;
 use App\Models\Penjualan;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
-     public function index()
+    public function index()
     {
-        // Hitung jumlah siswa yang menabung (misal semua siswa)
+        $user = Auth::user();
+
+        // default untuk bagian siswa
+        $saldo = 0;
+        $setoranBulanIni = 0;
+        $penarikanBulanIni = 0;
+        $transaksiTerakhir = collect();
+
+        if ($user->siswa) {
+            $siswaId = $user->siswa->id;
+
+            $saldo = TransaksiTabungan::where('siswa_id', $siswaId)->sum('jumlah');
+            $setoranBulanIni = TransaksiTabungan::where('siswa_id', $siswaId)
+                ->whereMonth('tanggal', now()->month)
+                ->where('jenis', 'setor')->sum('jumlah');
+            $penarikanBulanIni = TransaksiTabungan::where('siswa_id', $siswaId)
+                ->whereMonth('tanggal', now()->month)
+                ->where('jenis', 'tarik')->sum('jumlah');
+            $transaksiTerakhir = TransaksiTabungan::where('siswa_id', $siswaId)
+                ->orderBy('tanggal', 'desc')->take(5)->get();
+        }
+
+        // data untuk koordinator/petugas
         $jumlahSiswa = Siswa::count();
-
-        // total tabungan
-        $totalNominalTabunganHariIni = TransaksiTabungan::whereDate('tanggal', Carbon::today())->sum('jumlah');
-
-        // Penjualan hari ini
-        $penjualanHariIni = Penjualan::whereDate('tanggal', Carbon::today())->count();
-
-        // Transaksi mingguan (misal, total transaksi per hari dalam 7 hari terakhir)
-        $transaksiMingguan = TransaksiTabungan::select(
-            DB::raw('DATE(tanggal) as tanggal'),
-            DB::raw('COUNT(*) as total')
-        )
-        ->where('tanggal', '>=', Carbon::today()->subDays(6))
-        ->groupBy('tanggal')
-        ->orderBy('tanggal')
-        ->get();
-
-        // Penjualan mingguan
-        $penjualanMingguan = Penjualan::select(
-            DB::raw('DATE(tanggal) as tanggal'),
-            DB::raw('COUNT(*) as total')
-        )
-        ->where('tanggal', '>=', Carbon::today()->subDays(6))
-        ->groupBy('tanggal')
-        ->orderBy('tanggal')
-        ->get();
+        $totalNominalTabunganHariIni = TransaksiTabungan::whereDate('tanggal', today())->sum('jumlah');
+        $penjualanHariIni = Penjualan::whereDate('tanggal', today())->count();
+        $transaksiMingguan = TransaksiTabungan::selectRaw('DATE(tanggal) as tanggal, COUNT(*) as total')
+            ->where('tanggal', '>=', today()->subDays(6))->groupBy('tanggal')->orderBy('tanggal')->get();
+        $penjualanMingguan = Penjualan::selectRaw('DATE(tanggal) as tanggal, COUNT(*) as total')
+            ->where('tanggal', '>=', today()->subDays(6))->groupBy('tanggal')->orderBy('tanggal')->get();
 
         return view('dashboard', compact(
-            'jumlahSiswa', 'totalNominalTabunganHariIni', 'penjualanHariIni', 'transaksiMingguan', 'penjualanMingguan'
+            'saldo','setoranBulanIni','penarikanBulanIni','transaksiTerakhir',
+            'jumlahSiswa','totalNominalTabunganHariIni','penjualanHariIni',
+            'transaksiMingguan','penjualanMingguan'
         ));
     }
 }

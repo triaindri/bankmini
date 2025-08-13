@@ -29,39 +29,54 @@ class PenjualanController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'produk_id' => 'required|exists:produk,id',
-            'jumlah' => 'required|integer|min:1',
-            'tanggal' => 'required|date',
-            'metode_bayar' => 'required|in:cash,tabungan',
-            'siswa_id' => 'nullable|exists:siswa,id',
+            'produk_id'   => 'required|array',
+            'produk_id.*' => 'exists:produk,id',
+            'jumlah'      => 'required|array',
+            'jumlah.*'    => 'integer|min:1',
+            'tanggal'     => 'required|date',
+            'metode_bayar'=> 'required|in:cash,tabungan',
+            'siswa_id'    => 'nullable|exists:siswa,id',
         ]);
 
-        $produk = Produk::findOrFail($request->produk_id);
+        $totalKeseluruhan = 0;
 
-        if ($request->jumlah > $produk->stok) {
-            return back()->withErrors(['jumlah' => 'Stok tidak mencukupi.']);
+        // Hitung total & cek stok
+        foreach ($request->produk_id as $i => $id) {
+            $produk = Produk::findOrFail($id);
+
+            if ($request->jumlah[$i] > $produk->stok) {
+                return back()->withErrors(['jumlah' => "Stok produk {$produk->nama} tidak mencukupi."]);
+            }
+
+            $totalKeseluruhan += $produk->harga_jual * $request->jumlah[$i];
         }
 
-        $total = $produk->harga_jual * $request->jumlah;
-
+        // Cek saldo tabungan
         if ($request->metode_bayar == 'tabungan') {
             $tabungan = Tabungan::where('siswa_id', $request->siswa_id)->first();
-            if (!$tabungan || $tabungan->saldo < $total) {
+            if (!$tabungan || $tabungan->saldo < $totalKeseluruhan) {
                 return back()->withErrors(['siswa_id' => 'Saldo tabungan tidak cukup.']);
             }
-            $tabungan->decrement('saldo', $total);
+            $tabungan->decrement('saldo', $totalKeseluruhan);
         }
 
-        Penjualan::create([
-            'produk_id' => $produk->id,
-            'jumlah' => $request->jumlah,
-            'total' => $total,
-            'tanggal' => $request->tanggal,
-            'siswa_id' => $request->siswa_id,
-            'metode_bayar' => $request->metode_bayar,
-        ]);
+        // Simpan penjualan per produk
+        foreach ($request->produk_id as $i => $id) {
+            $produk = Produk::findOrFail($id);
+            $jumlah = $request->jumlah[$i];
+            $total  = $produk->harga_jual * $jumlah;
 
-        $produk->decrement('stok', $request->jumlah);
+            Penjualan::create([
+                'produk_id'    => $id,
+                'jumlah'       => $jumlah,
+                'total'        => $total,
+                'tanggal'      => $request->tanggal,
+                'siswa_id'     => $request->siswa_id,
+                'metode_bayar' => $request->metode_bayar,
+            ]);
+
+            $produk->decrement('stok', $jumlah);
+        }
 
         return redirect()->back()->with('success', 'Penjualan berhasil disimpan.');
     }

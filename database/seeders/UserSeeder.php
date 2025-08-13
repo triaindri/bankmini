@@ -14,21 +14,29 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::UpdateorCreate([
+        $koordinator = User::UpdateorCreate([
+            'email' => 'koordinator@bankmini.test'],[
             'name' => 'Koordinator Bank Mini',
-            'email' => 'koordinator@bankmini.test',
             'username' => 'koordinator',
             'password' => Hash::make('password'),
-            'role' => 'koordinator',
         ]);
+        $koordinator->assignRole('koordinator');
 
         // Petugas
-        User::UpdateorCreate([
+        $petugas = User::UpdateorCreate([
+            'email' => 'petugas@bankmini.test'],[
             'name' => 'Petugas Bank Mini',
-            'email' => 'petugas@bankmini.test',
             'username' => 'petugas',
             'password' => Hash::make('password'),
-            'role' => 'petugas',
         ]);
+        $petugas->assignRole('petugas');
+
+        $siswa = User::UpdateorCreate([
+            'email' => 'siswa@bankmini.test'],[
+            'name' => 'siswa Bank Mini',
+            'username' => 'siswa',
+            'password' => Hash::make('password'),
+        ]);
+        $siswa->assignRole('siswa');
     }
 }

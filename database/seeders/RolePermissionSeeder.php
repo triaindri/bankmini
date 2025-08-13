@@ -15,45 +15,52 @@ class RolePermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create Permissions
-        Permission::create(['name' => 'create-siswa']);
-        Permission::create(['name' => 'read-siswa']);
-        // Permission::create(['name' => 'edit-siswa']);
-        // Permission::create(['name' => 'view-rekapitulasi']);
-        // Permission::create(['name' => 'manage-transaksi-tabungan']);
-        // Permission::create(['name' => 'manage-transaksi-atk']);
-        // Permission::create(['name' => 'view-saldo']);
-        // Permission::create(['name' => 'view-riwayat-transaksi']);
-        // Permission::create(['name' => 'view-produk']);
+        // Define permissions
+        // $permissions = [
+        //     'create-siswa',
+        //     'read-siswa',
+        //     'edit-siswa',
+        //     'view-rekapitulasi',
+        //     'manage-transaksi-tabungan',
+        //     'manage-transaksi-atk',
+        //     'view-saldo',
+        //     'view-riwayat-transaksi',
+        //     'view-produk',
+        // ];
 
-        // Create Roles
-        Role::create(['name' => 'koordinator']);
-        Role::create(['name' => 'petugas']);
-        Role::create(['name' => 'siswa']);
+        // // Create permissions
+        // foreach ($permissions as $permission) {
+        //     Permission::firstOrCreate(['name' => $permission]);
+        // }
 
-        // Assign Permissions to Role - Koordinator
-        $roleKoordinator = Role::findByName('koordinator');
-        $roleKoordinator->givePermissionTo([
-            'create-siswa',
-            'read-siswa',
-            // 'edit-siswa',
-            // 'view-rekapitulasi',
-        ]);
+        // // Create roles
+        // $koordinator = Role::firstOrCreate(['name' => 'koordinator']);
+        // $petugas     = Role::firstOrCreate(['name' => 'petugas']);
+        // $siswa       = Role::firstOrCreate(['name' => 'siswa']);
 
-        // Assign Permissions to Role - Petugas
-        $rolePetugas = Role::findByName('petugas');
-        $rolePetugas->givePermissionTo([
-            'read-siswa',
-            // 'manage-transaksi-tabungan',
-            // 'manage-transaksi-atk',
-        ]);
+        // // Assign permissions to Koordinator
+        // $koordinator->givePermissionTo([
+        //     'create-siswa',
+        //     'read-siswa',
+        //     'edit-siswa',
+        //     'view-rekapitulasi',
+        // ]);
 
-        // Assign Permissions to Role - Siswa
-        $roleSiswa = Role::findByName('siswa');
-        $roleSiswa->givePermissionTo([
-            'read-saldo',
-            // 'read-riwayat-transaksi',
-            'read-produk',
-        ]);
+        // // Assign permissions to Petugas
+        // $petugas->givePermissionTo([
+        //     'read-siswa',
+        //     'manage-transaksi-tabungan',
+        //     'manage-transaksi-atk',
+        // ]);
+
+        // // Assign permissions to Siswa
+        // $siswa->givePermissionTo([
+        //     'view-saldo',
+        //     'view-riwayat-transaksi',
+        //     'view-produk',
+        // ]);
+        Role::create(['name'=>'koordinator']);
+        Role::create(['name'=>'petugas']);
+        Role::create(['name'=>'siswa']);
     }
 }

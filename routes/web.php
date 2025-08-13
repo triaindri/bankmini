@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SiswaController;
 use Illuminate\Support\Facades\Route;
@@ -8,14 +9,20 @@ use App\Http\Controllers\KoreksiSaldoController;
 use App\Http\Controllers\TransaksiPenarikanController;
 use App\Http\Controllers\PenjualanController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DashboardSiswaController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\ProdukController;
-
+use App\Http\Controllers\SiswaSaldoController;
+use App\Http\Controllers\TransaksiController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
+Route::middleware(['auth', 'role:koordinator'])->group(function () {
+    Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
+    Route::post('/register', [RegisteredUserController::class, 'store']);
+});
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -27,16 +34,15 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'role:petugas'])->group(function () {
     Route::get('/transaksitabungan/setoran', [TransaksiSetoranController::class, 'index'])->name('setoran.index');
     Route::get('/transaksitabungan/setoran/create', [TransaksiSetoranController::class, 'create'])->name('setoran.create'); // tambah halaman form
     Route::post('/transaksitabungan/setoran', [TransaksiSetoranController::class, 'store'])->name('setoran.store');
-
     Route::get('/transaksitabungan/setoran/get-siswa-by-nis', [TransaksiSetoranController::class, 'getSiswaByNis'])->name('setoran.getSiswaByNis'); // ajax
 });
 
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'role:koordinator|petugas'])->group(function () {
     Route::get('/siswa', [SiswaController::class, 'index'])->name('siswa.index');
     Route::get('/siswa/create', [SiswaController::class, 'create'])->name('siswa.create');
     Route::post('/siswa', [SiswaController::class, 'store'])->name('siswa.store');
@@ -46,18 +52,18 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/siswa/{id}', [SiswaController::class, 'destroy'])->name('siswa.destroy');
 });
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/transaksi/penarikan', [TransaksiPenarikanController::class, 'index'])->name('penarikan.index');
-    Route::post('/transaksi/penarikan', [TransaksiPenarikanController::class, 'store'])->name('penarikan.store');
+Route::middleware(['auth', 'role:petugas'])->group(function () {
     Route::get('/penarikan/create/{siswa}', [TransaksiPenarikanController::class, 'create'])->name('penarikan.create');
+    Route::post('/transaksi/penarikan', [TransaksiPenarikanController::class, 'store'])->name('penarikan.store');
+    Route::get('/transaksi/penarikan', [TransaksiPenarikanController::class, 'index'])->name('penarikan.index');
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'role:petugas'])->group(function () {
     Route::get('/penjualan', [PenjualanController::class, 'create'])->name('penjualan.create');
     Route::post('/penjualan', [PenjualanController::class, 'store'])->name('penjualan.store');
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'role:koordinator|petugas'])->group(function () {
     Route::get('/produk', [ProdukController::class, 'index'])->name('produk.index');
     Route::post('/produk', [ProdukController::class, 'store'])->name('produk.store');
     Route::get('/produk/{id}/edit', [ProdukController::class, 'edit'])->name('produk.edit');
@@ -65,11 +71,22 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/produk/{id}', [ProdukController::class, 'destroy'])->name('produk.destroy');
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'role:koordinator|petugas|siswa'])->group(function () {
     Route::get('/pembelian', [PembelianController::class, 'create'])->name('pembelian.create');
     Route::post('/pembelian', [PembelianController::class, 'store'])->name('pembelian.store');
     Route::put('/pembelian/{id}', [PembelianController::class, 'update'])->name('pembelian.update');
     Route::delete('/pembelian/{id}', [PembelianController::class, 'destroy'])->name('pembelian.destroy');
+});
+
+Route::middleware('auth')->get('/saldo', [SiswaSaldoController::class, 'index'])->name('saldo.index');
+
+Route::middleware(['auth', 'role:siswa'])->group(function () {
+    Route::get('siswa/riwayat-transaksi', [TransaksiController::class, 'riwayat'])->name('siswa.riwayat');
+});
+
+Route::middleware(['auth', 'role:siswa'])->group(function () {
+    Route::get('/siswa/notifikasi', [\App\Http\Controllers\NotifikasiController::class, 'index'])
+         ->name('siswa.notifikasi');
 });
 
 require __DIR__.'/auth.php';

@@ -33,12 +33,12 @@
             @else
                     <a href="{{ route('login') }}"
                        class="inline-block px-5 py-2 text-white bg-blue-400 hover:bg-blue-200 rounded-md text-sm">
-                        Login
+                        Masuk
                     </a>
                 @if (Route::has('register'))
                     <a href="{{ route('register') }}"
                         class="inline-block px-5 py-2 border border-blue-100 text-blue-100 hover:bg-blue-400 hover:text-white rounded-md text-sm">
-                            Register
+                        Daftar
                     </a>
                     @endif
                 @endauth
