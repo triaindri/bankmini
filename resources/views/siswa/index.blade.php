@@ -1,8 +1,8 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex items-center justify-between w-full">
             <h1 class="text-xl font-extrabold">Data Siswa</h1>
-            <div class="mt-4 sm:mt-0 flex items-center space-x-2">
+            <div class="mt-4 sm:mt-0 flex items-center space-x-2 ml-auto">
                 <!-- Form Pencarian -->
                 <form method="GET" action="{{ route('siswa.index') }}" class="relative" id="search-form">
                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 pointer-events-none">

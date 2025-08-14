@@ -3,7 +3,7 @@
         <h2 class="font-semibold text-xl text-white leading-tight">Transaksi Penjualan</h2>
     </x-slot>
 
-    <main class="py-6 max-w-5xl mx-auto">
+    <main class="py-3 max-w-7xl mx-auto">
         <div class="bg-white p-6 rounded shadow">
             @if(session('success'))
                 <div class="bg-green-100 border border-green-400 text-green-700 p-2 rounded mb-4">
@@ -19,8 +19,11 @@
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-6">
                     @foreach($produk as $p)
                         <div 
-                            class="border rounded-lg p-2 hover:bg-blue-100 cursor-pointer text-center" 
-                            onclick="tambahKeKeranjang('{{ $p->id }}', '{{ $p->nama }}')">
+                            class="produk-item border rounded-lg p-2 hover:bg-blue-100 cursor-pointer text-center"
+                            data-id="{{ $p->id }}"
+                            data-nama="{{ $p->nama }}"
+                            data-harga="{{ $p->harga_jual }}"
+                            onclick="handleClickProduk(this)">
                             @if($p->gambar)
                                 <img src="{{ asset('storage/'.$p->gambar) }}" alt="{{ $p->nama }}" class="w-full h-24 object-cover rounded mb-2">
                             @else
@@ -45,6 +48,10 @@
                     </thead>
                     <tbody></tbody>
                 </table>
+
+                <div class="text-left font-semibold text-lg mb-4">
+                    Total Bayar: Rp <span id="total_bayar">0</span>
+                </div>
 
                 <!-- Form lainnya -->
                 <div class="grid grid-cols-2 gap-4 mb-4">
@@ -76,37 +83,66 @@
     </main>
 
     <script>
-        function tambahKeKeranjang(id, nama) {
+        const keranjang = {};
+
+        function formatRupiah(angka) {
+            return angka.toLocaleString('id-ID');
+        }
+
+        function handleClickProduk(el) {
+            const id = el.dataset.id;
+            const nama = el.dataset.nama;
+            const harga = parseInt(el.dataset.harga);
+            tambahKeKeranjang(id, nama, harga);
+        }
+
+        function tambahKeKeranjang(id, nama, harga) {
             const tbody = document.querySelector('#tabel_keranjang tbody');
-            
-            // Cek apakah produk sudah ada di keranjang
-            let existingRow = document.querySelector(`#row_${id}`);
-            if(existingRow) {
-                let qtyInput = existingRow.querySelector('input[name="jumlah[]"]');
+
+            if (keranjang[id]) {
+                let row = document.querySelector(`#row_${id}`);
+                let qtyInput = row.querySelector('input[name="jumlah[]"]');
                 qtyInput.value = parseInt(qtyInput.value) + 1;
-                return;
+            } else {
+                keranjang[id] = harga;
+
+                let tr = document.createElement('tr');
+                tr.id = `row_${id}`;
+                tr.innerHTML = `
+                    <td class="border px-2 py-1">
+                        ${nama}
+                        <input type="hidden" name="produk_id[]" value="${id}">
+                    </td>
+                    <td class="border px-2 py-1">
+                        <input type="number" name="jumlah[]" value="1" min="1" class="w-full border rounded" onchange="hitungTotalBayar()">
+                    </td>
+                    <td class="border px-2 py-1 text-center">
+                        <button type="button" onclick="hapusProduk('${id}')" class="text-red-600 font-bold">X</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
             }
 
-            // Buat row baru
-            let tr = document.createElement('tr');
-            tr.id = `row_${id}`;
-            tr.innerHTML = `
-                <td class="border px-2 py-1">
-                    ${nama}
-                    <input type="hidden" name="produk_id[]" value="${id}">
-                </td>
-                <td class="border px-2 py-1">
-                    <input type="number" name="jumlah[]" value="1" min="1" class="w-full border rounded">
-                </td>
-                <td class="border px-2 py-1 text-center">
-                    <button type="button" onclick="hapusProduk('${id}')" class="text-red-600 font-bold">X</button>
-                </td>
-            `;
-            tbody.appendChild(tr);
+            hitungTotalBayar();
         }
 
         function hapusProduk(id) {
             document.querySelector(`#row_${id}`).remove();
+            delete keranjang[id];
+            hitungTotalBayar();
+        }
+
+        function hitungTotalBayar() {
+            let total = 0;
+            for (let id in keranjang) {
+                let row = document.querySelector(`#row_${id}`);
+                if (row) {
+                    let qty = parseInt(row.querySelector('input[name="jumlah[]"]').value);
+                    total += keranjang[id] * qty;
+                }
+            }
+
+            document.getElementById('total_bayar').textContent = formatRupiah(total);
         }
     </script>
 </x-app-layout>

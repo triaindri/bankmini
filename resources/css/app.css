@@ -9,8 +9,8 @@
 }
 
 .form-col {
-    flex: 1;
-    min-width: 300px;
+    flex: 1 1 300px; /* fleksibel dengan basis 300px */
+    min-width: 0;
 }
 .form-group {
     display: flex;
@@ -25,6 +25,6 @@
 }
 
 .form-group input {
-    width: 300px;
+    width: 100%;
     padding: 7px;
 }

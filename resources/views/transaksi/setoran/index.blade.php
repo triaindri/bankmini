@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
+        <div class="flex items-center justify-between w-full">
             <h2 class="text-xl font-bold text-white">Setoran Tabungan</h2>
             <a href="{{ route('setoran.create') }}"
                 class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded flex items-center gap-2">

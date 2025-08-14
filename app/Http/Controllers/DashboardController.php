@@ -38,7 +38,15 @@ class DashboardController extends Controller
 
         // data untuk koordinator/petugas
         $jumlahSiswa = Siswa::count();
-        $totalNominalTabunganHariIni = TransaksiTabungan::whereDate('tanggal', today())->sum('jumlah');
+        $totalNominalTabunganHariIni = TransaksiTabungan::whereDate('tanggal', today())
+            ->selectRaw("
+                SUM(CASE 
+                    WHEN jenis = 'setor' THEN jumlah 
+                    WHEN jenis = 'tarik' THEN -jumlah 
+                    ELSE 0 
+                END) as total
+            ")->value('total') ?? 0;
+
         $penjualanHariIni = Penjualan::whereDate('tanggal', today())->count();
         $transaksiMingguan = TransaksiTabungan::selectRaw('DATE(tanggal) as tanggal, COUNT(*) as total')
             ->where('tanggal', '>=', today()->subDays(6))->groupBy('tanggal')->orderBy('tanggal')->get();

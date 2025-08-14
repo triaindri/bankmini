@@ -1,6 +1,6 @@
 <x-app-layout>
    <x-slot name="header">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex items-center justify-between w-full">
             <h2 class="text-xl font-extrabold text-white">Pembelian Produk</h2>
             <div class="mt-4 sm:mt-0 flex items-center space-x-2">
                 <!-- Form Pencarian -->

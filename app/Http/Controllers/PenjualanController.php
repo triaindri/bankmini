@@ -53,12 +53,26 @@ class PenjualanController extends Controller
 
         // Cek saldo tabungan
         if ($request->metode_bayar == 'tabungan') {
-            $tabungan = Tabungan::where('siswa_id', $request->siswa_id)->first();
-            if (!$tabungan || $tabungan->saldo < $totalKeseluruhan) {
-                return back()->withErrors(['siswa_id' => 'Saldo tabungan tidak cukup.']);
-            }
-            $tabungan->decrement('saldo', $totalKeseluruhan);
-        }
+    $tabungan = Tabungan::where('siswa_id', $request->siswa_id)->first();
+
+    if (!$tabungan || $tabungan->saldo < $totalKeseluruhan) {
+        return back()->withErrors(['siswa_id' => 'Saldo tabungan tidak cukup.']);
+    }
+
+    // Kurangi saldo
+    $tabungan->decrement('saldo', $totalKeseluruhan);
+
+    // Catat juga sebagai transaksi penarikan
+    \App\Models\Transaksitabungan::create([
+        'siswa_id'   => $request->siswa_id,
+        'tabungan_id' => $tabungan->id,
+        'jenis'      => 'tarik',
+        'jumlah'     => $totalKeseluruhan,
+        'tanggal'    => $request->tanggal,
+        'keterangan' => 'Pembelian ATK', // kalau kamu punya kolom ini
+    ]);
+}
+
 
         // Simpan penjualan per produk
         foreach ($request->produk_id as $i => $id) {

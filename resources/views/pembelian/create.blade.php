@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <main class="py-4 max-w-4xl mx-auto">
+    <main class="py-3 max-w-7xl mx-auto">
         <div class="bg-white p-6 rounded shadow">
             <form method="GET" action="{{ route('pembelian.create') }}" class="relative mb-4" id="search-form">
                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 pointer-events-none">
