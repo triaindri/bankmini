@@ -29,8 +29,9 @@
 
             <!-- Menu -->
             <nav class="space-y-2">
-                @hasrole('koordinator|petugas')
+                @hasrole('koordinator')
                     <a href="{{ route('siswa.index') }}" class="block text-white">Data Siswa</a>
+                    <a href="{{ route('otorisasi.index') }}" class="block text-white">Daftar Otorisasi</a>
                 @endhasrole
 
                 @hasrole('petugas')
@@ -38,7 +39,7 @@
                     <a href="{{ route('penarikan.index') }}" class="block text-white">Penarikan Tabungan</a>
                 @endhasrole
 
-                @hasrole('koordinator|petugas')
+                @hasrole('koordinator')
                     <a href="{{ route('produk.index') }}" class="block text-white">Pembelian Produk</a>
                 @endhasrole
 

@@ -35,28 +35,56 @@ class DashboardController extends Controller
             $transaksiTerakhir = TransaksiTabungan::where('siswa_id', $siswaId)
                 ->orderBy('tanggal', 'desc')->take(5)->get();
         }
+        // Data untuk koordinator/petugas
 
-        // data untuk koordinator/petugas
-        $jumlahSiswa = Siswa::count();
-        $totalNominalTabunganHariIni = TransaksiTabungan::whereDate('tanggal', today())
-            ->selectRaw("
-                SUM(CASE 
-                    WHEN jenis = 'setor' THEN jumlah 
-                    WHEN jenis = 'tarik' THEN -jumlah 
-                    ELSE 0 
-                END) as total
-            ")->value('total') ?? 0;
+        $jumlahSiswa = DB::table('transaksitabungan')
+            ->join('tabungan', 'transaksitabungan.tabungan_id', '=', 'tabungan.id')
+            ->join('siswa', 'tabungan.siswa_id', '=', 'siswa.id')
+            ->whereDate('transaksitabungan.tanggal', today())
+            ->where('transaksitabungan.jenis', 'setor')
+            ->distinct('siswa.id')
+            ->count('siswa.id');
 
-        $penjualanHariIni = Penjualan::whereDate('tanggal', today())->count();
+        $totalNominalTabunganHariIni = DB::table('transaksitabungan')
+            ->whereDate('tanggal', today())
+            ->where('jenis', 'setor')
+            ->sum('jumlah');
+
+        $penjualanHariIni = Penjualan::whereDate('tanggal', today())->sum('total'); 
         $transaksiMingguan = TransaksiTabungan::selectRaw('DATE(tanggal) as tanggal, COUNT(*) as total')
             ->where('tanggal', '>=', today()->subDays(6))->groupBy('tanggal')->orderBy('tanggal')->get();
         $penjualanMingguan = Penjualan::selectRaw('DATE(tanggal) as tanggal, COUNT(*) as total')
             ->where('tanggal', '>=', today()->subDays(6))->groupBy('tanggal')->orderBy('tanggal')->get();
 
+        // Data grafik jumlah siswa menabung per bulan (1 tahun)
+        $startOfYear = now()->startOfYear();
+        $endOfYear = now()->endOfYear();
+
+        $siswaPerBulan = DB::table('transaksitabungan')
+            ->join('tabungan', 'transaksitabungan.tabungan_id', '=', 'tabungan.id')
+            ->join('siswa', 'tabungan.siswa_id', '=', 'siswa.id')
+            ->selectRaw('YEAR(transaksitabungan.tanggal) as tahun, MONTH(transaksitabungan.tanggal) as bulan, COUNT(DISTINCT siswa.id) as total_siswa')
+            ->whereBetween('transaksitabungan.tanggal', [$startOfYear, $endOfYear])
+            ->where('transaksitabungan.jenis', 'setor')
+            ->groupBy('tahun', 'bulan')
+            ->orderBy('tahun')
+            ->orderBy('bulan')
+            ->get();
+
+        $labelsGrafikTahunan = [];
+        $dataGrafikTahunan = [];
+        foreach ($siswaPerBulan as $row) {
+            $labelsGrafikTahunan[] = Carbon::create($row->tahun, $row->bulan)->format('F'); // Januari, Februari...
+            $dataGrafikTahunan[] = $row->total_siswa;
+        }
+
         return view('dashboard', compact(
             'saldo','setoranBulanIni','penarikanBulanIni','transaksiTerakhir',
             'jumlahSiswa','totalNominalTabunganHariIni','penjualanHariIni',
-            'transaksiMingguan','penjualanMingguan'
+            'transaksiMingguan','penjualanMingguan',
+            'labelsGrafikTahunan','dataGrafikTahunan' 
         ));
     }
+    
+    
 }

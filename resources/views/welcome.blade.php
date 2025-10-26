@@ -55,12 +55,12 @@
                 <h1 class="mb-2 text-3xl lg:text-4xl font-extrabold text-blue-100 leading-tight">Selamat Datang di</h1>
                 <h2 class="mb-4 text-blue-100 text-2xl font-bold">Bank Mini SMK Pasundan 1 Cianjur</h2>
                 <p class="mb-6 text-sm text-blue-100 dark:text-gray-300">
-                    Sistem ini dirancang untuk mendukung kegiatan praktik perbankan siswa-siswi SMK.
+                    Sistem ini dirancang untuk mendukung kegiatan praktik perbankan siswa-siswi SMK Pasundan 1 Cianjur
                 </p>
-                <a href="{{ route('login') }}"
+                <!-- <a href="{{ route('login') }}"
                    class="inline-block bg-blue-300 hover:bg-blue-500 text-blue-700 hover:text-white px-6 py-2 rounded-md text-sm">
-                    Mulai Sekarang
-                </a>
+                    Masuk ke Bank Mini
+                </a> -->
             </div>
 
             {{-- Logo --}}
@@ -74,7 +74,7 @@
 
     {{-- Footer --}}
     <footer class="mt-12 text-xs text-center text-white dark:text-gray-400">
-        © {{ date('Y') }} SMK Pasundan 1 Cianjur. All rights reserved.
+        © {{ date('Y') }} SMK Pasundan 1 Cianjur
     </footer>
 </body>
 </html>

@@ -17,17 +17,32 @@
                     Rp {{ number_format($totalNominalTabunganHariIni, 0, ',', '.') }}
                 </p>
             </div>
-            <!-- <div class="bg-white rounded-lg shadow p-6 text-center">
+            <div class="bg-white rounded-lg shadow p-6 text-center">
                 <h3 class="text-lg font-semibold">Penjualan Hari Ini</h3>
                 <p class="text-3xl font-bold text-red-600">{{ $penjualanHariIni }}</p>
-            </div> -->
+            </div>
         </div>
 
         {{-- Grafik --}}
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            
-        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <!-- Grafik Jumlah Siswa Menabung Tahunan -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold mb-4">Jumlah Siswa Menabung Per Bulan (Tahun Ini)</h3>
+                <canvas id="chartTahunan"></canvas>
+            </div>
 
+            <!-- Grafik Transaksi Tabungan Mingguan -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold mb-4">Transaksi Tabungan Mingguan</h3>
+                <canvas id="chartTransaksi"></canvas>
+            </div>
+
+            <!-- Grafik Penjualan Mingguan -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold mb-4">Penjualan Mingguan</h3>
+                <canvas id="chartPenjualan"></canvas>
+            </div>
+        </div>
     </div>
 
     @push('scripts')
@@ -35,8 +50,33 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
+        // Grafik Tahunan Siswa Menabung
+        const labelsTahunan = @json($labelsGrafikTahunan);
+        const dataTahunan = @json($dataGrafikTahunan);
 
-        // Chart Transaksi Tabungan
+        const ctxTahunan = document.getElementById('chartTahunan').getContext('2d');
+        new Chart(ctxTahunan, {
+            type: 'line',
+            data: {
+                labels: labelsTahunan,
+                datasets: [{
+                    label: 'Jumlah Siswa Menabung',
+                    data: dataTahunan,
+                    borderColor: 'rgb(59, 130, 246)',
+                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                scales: { y: { beginAtZero: true, precision: 0 } }
+            }
+        });
+
+        // Grafik Transaksi Tabungan Mingguan
+        const transaksiLabels = @json($transaksiMingguan->pluck('tanggal'));
+        const transaksiData = @json($transaksiMingguan->pluck('total'));
+
         const ctxTransaksi = document.getElementById('chartTransaksi').getContext('2d');
         new Chart(ctxTransaksi, {
             type: 'line',
@@ -45,18 +85,19 @@
                 datasets: [{
                     label: 'Jumlah Transaksi',
                     data: transaksiData,
-                    borderColor: 'rgb(34, 197, 94)', // hijau
+                    borderColor: 'rgb(34, 197, 94)',
                     backgroundColor: 'rgba(34, 197, 94, 0.2)',
                     fill: true,
                     tension: 0.4
                 }]
             },
-            options: {
-                scales: { y: { beginAtZero: true } }
-            }
+            options: { scales: { y: { beginAtZero: true } } }
         });
 
-        // Chart Penjualan
+        // Grafik Penjualan Mingguan
+        const penjualanLabels = @json($penjualanMingguan->pluck('tanggal'));
+        const penjualanData = @json($penjualanMingguan->pluck('total'));
+
         const ctxPenjualan = document.getElementById('chartPenjualan').getContext('2d');
         new Chart(ctxPenjualan, {
             type: 'line',
@@ -65,15 +106,13 @@
                 datasets: [{
                     label: 'Jumlah Penjualan',
                     data: penjualanData,
-                    borderColor: 'rgb(239, 68, 68)', // merah
+                    borderColor: 'rgb(239, 68, 68)',
                     backgroundColor: 'rgba(239, 68, 68, 0.2)',
                     fill: true,
                     tension: 0.4
                 }]
             },
-            options: {
-                scales: { y: { beginAtZero: true } }
-            }
+            options: { scales: { y: { beginAtZero: true } } }
         });
     </script>
     @endpush

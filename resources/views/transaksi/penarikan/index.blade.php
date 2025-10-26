@@ -13,7 +13,7 @@
                                     6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
                             </svg>
                         </div>
-                        <input type="text" name="q" id="search-input" value="{{ request('q') }}"
+                        <input type="text" name="q" id="search-input" style="color: black;" value="{{ request('q') }}"
                                placeholder="Cari nama / NIS"
                                class="pl-10 pr-4 py-2 border rounded text-sm focus:outline-none focus:ring w-64"/>
                     </div>

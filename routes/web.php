@@ -10,6 +10,7 @@ use App\Http\Controllers\TransaksiPenarikanController;
 use App\Http\Controllers\PenjualanController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DashboardSiswaController;
+use App\Http\Controllers\OtorisasiPenarikanController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\SiswaSaldoController;
@@ -87,6 +88,11 @@ Route::middleware(['auth', 'role:siswa'])->group(function () {
 Route::middleware(['auth', 'role:siswa'])->group(function () {
     Route::get('/siswa/notifikasi', [\App\Http\Controllers\NotifikasiController::class, 'index'])
          ->name('siswa.notifikasi');
+});
+
+Route::middleware(['role:koordinator'])->group(function () {
+    Route::get('/otorisasi-penarikan', [OtorisasiPenarikanController::class, 'index'])->name('otorisasi.index');
+    Route::post('/otorisasi-penarikan/{id}', [OtorisasiPenarikanController::class, 'update'])->name('otorisasi.update');
 });
 
 require __DIR__.'/auth.php';
