@@ -14,7 +14,7 @@ use App\Http\Controllers\OtorisasiPenarikanController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\SiswaSaldoController;
-use App\Http\Controllers\TransaksiController;
+use App\Http\Controllers\RiwayatTransaksiController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -82,7 +82,8 @@ Route::middleware(['auth', 'role:koordinator|petugas|siswa'])->group(function ()
 Route::middleware('auth')->get('/saldo', [SiswaSaldoController::class, 'index'])->name('saldo.index');
 
 Route::middleware(['auth', 'role:siswa'])->group(function () {
-    Route::get('siswa/riwayat-transaksi', [TransaksiController::class, 'riwayat'])->name('siswa.riwayat');
+    Route::get('/riwayat-transaksi', [RiwayatTransaksiController::class, 'index'])
+        ->name('siswa.riwayat');
 });
 
 Route::middleware(['auth', 'role:siswa'])->group(function () {
