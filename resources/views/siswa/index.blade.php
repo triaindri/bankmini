@@ -64,12 +64,13 @@
                         <th class="border border-gray-300 px-4 py-2 text-center">Alamat</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Jenis Kelamin</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Saldo</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($siswa as $index => $s)
                     <tr class="hover:bg-gray-100 cursor-pointer row-select"
-                        title="Klik 2x untuk lihat detail"
+                        title="Klik untuk pilih baris (hapus), klik 2x untuk lihat detail"
                         ondblclick="window.location.href='{{ route('siswa.show', $s->id) }}'"
                         data-id="{{ $s->id }}"
                         data-edit-url="{{ route('siswa.edit', $s->id) }}"
@@ -82,6 +83,15 @@
                         <td class="px-4 py-2 border text-center capitalize">{{ $s->jeniskelamin }}</td>
                         <td class="px-4 py-2 border text-center">
                             Rp {{ number_format(optional($s->tabungan)->saldo ?? 0, 0, ',', '.') }}
+                        </td>
+                        <td class="px-4 py-2 border text-center whitespace-nowrap">
+                            <a href="{{ route('siswa.show', $s->id) }}"
+                                onclick="event.stopPropagation()"
+                                class="text-blue-600 hover:underline">Detail</a>
+                            <span class="text-gray-300">|</span>
+                            <a href="{{ route('siswa.edit', $s->id) }}"
+                                onclick="event.stopPropagation()"
+                                class="text-yellow-600 hover:underline">Ubah</a>
                         </td>
                     </tr>
                     @endforeach

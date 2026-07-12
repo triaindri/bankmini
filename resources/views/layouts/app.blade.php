@@ -31,7 +31,8 @@
             <nav class="space-y-2">
                 @hasrole('koordinator')
                     <a href="{{ route('siswa.index') }}" class="block text-white">Data Siswa</a>
-                    <a href="{{ route('otorisasi.index') }}" class="block text-white">Daftar Otorisasi</a>
+                    <!-- <a href="{{ route('otorisasi.index') }}" class="block text-white">Daftar Otorisasi</a> -->
+                     <a href="{{ route('analisis.index') }}" class="block text-white">Analisis Perilaku Menabung</a>
                 @endhasrole
 
                 @hasrole('petugas')

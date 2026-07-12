@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnalisisPerilakuMenabungController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SiswaController;
@@ -94,6 +95,15 @@ Route::middleware(['auth', 'role:siswa'])->group(function () {
 Route::middleware(['role:koordinator'])->group(function () {
     Route::get('/otorisasi-penarikan', [OtorisasiPenarikanController::class, 'index'])->name('otorisasi.index');
     Route::post('/otorisasi-penarikan/{id}', [OtorisasiPenarikanController::class, 'update'])->name('otorisasi.update');
+});
+
+Route::middleware(['auth', 'role:koordinator'])->group(function () {
+    Route::get('/siswa', [SiswaController::class, 'index'])->name('siswa.index');
+    // ... route siswa yang sudah ada ...
+
+    Route::get('/analisis-perilaku', [AnalisisPerilakuMenabungController::class, 'index'])->name('analisis.index');
+    Route::post('/analisis-perilaku/generate', [AnalisisPerilakuMenabungController::class, 'generate'])->name('analisis.generate');
+    Route::get('/analisis-perilaku/{siswa}', [AnalisisPerilakuMenabungController::class, 'show'])->name('analisis.show');
 });
 
 require __DIR__.'/auth.php';

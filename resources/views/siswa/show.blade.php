@@ -23,6 +23,12 @@
                 <div><strong>Tanggal Lahir :</strong> {{ \Carbon\Carbon::parse($siswa->tanggal_lahir)->format('d-m-Y') }}</div>
                 <div class="col-span-2"><strong>Alamat :</strong> {{ $siswa->alamat }}</div>
                 <div><strong>Saldo Tabungan :</strong> Rp {{ number_format(optional($siswa->tabungan)->saldo ?? 0, 0, ',', '.') }}</div>
+                <div><strong>Pendapatan Orang Tua :</strong>
+                    Rp {{ $siswa->pendapatan_orang_tua ? number_format($siswa->pendapatan_orang_tua, 0, ',', '.') : '- (belum diisi)' }}
+                </div>
+                <div><strong>Jumlah Tanggungan :</strong>
+                    {{ $siswa->jumlah_tanggungan ?? '- (belum diisi)' }} orang
+                </div>
             </div>
 
             <!-- Tombol Edit di Bawah Card -->

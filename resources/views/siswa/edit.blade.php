@@ -102,6 +102,24 @@
                     </select>
                 </div>
 
+                <div class="mb-4">
+                    <label class="block font-semibold">Pendapatan Orang Tua (per bulan)</label>
+                    <input type="number" name="pendapatan_orang_tua"
+                        value="{{ old('pendapatan_orang_tua', $siswa->pendapatan_orang_tua) }}"
+                        min="0" step="1000" class="w-full border rounded px-3 py-2"
+                        placeholder="Contoh: 3500000">
+                    <small class="text-gray-500">Digunakan untuk analisis perilaku menabung. Boleh dikosongkan jika belum tahu.</small>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block font-semibold">Jumlah Tanggungan Orang Tua</label>
+                    <input type="number" name="jumlah_tanggungan"
+                        value="{{ old('jumlah_tanggungan', $siswa->jumlah_tanggungan) }}"
+                        min="1" max="20" class="w-full border rounded px-3 py-2"
+                        placeholder="Contoh: 3">
+                    <small class="text-gray-500">Jumlah anggota keluarga yang menjadi tanggungan ekonomi orang tua.</small>
+                </div>
+
                 <div class="flex justify-end space-x-2">
                     <a href="{{ route('siswa.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded">Batal</a>
                     <x-primary-button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">

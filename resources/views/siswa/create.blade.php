@@ -103,6 +103,22 @@
                         <option value="laki-laki" {{ old('jeniskelamin') == 'laki-laki' ? 'selected' : '' }}>Laki-laki</option>
                     </select>
                 </div>
+                <div class="mb-4">
+                <label for="pendapatan_orang_tua" class="block font-medium text-gray-700">Pendapatan Orang Tua (per bulan)</label>
+                <input type="number" name="pendapatan_orang_tua" id="pendapatan_orang_tua"
+                    value="{{ old('pendapatan_orang_tua') }}" min="0" step="1000"
+                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-300"
+                    placeholder="Contoh: 3500000">
+                <small class="text-gray-500">Digunakan untuk analisis perilaku menabung. Boleh dikosongkan jika belum tahu.</small>
+                </div>
+                <div class="mb-4">
+                    <label for="jumlah_tanggungan" class="block font-medium text-gray-700">Jumlah Tanggungan Orang Tua</label>
+                    <input type="number" name="jumlah_tanggungan" id="jumlah_tanggungan"
+                        value="{{ old('jumlah_tanggungan') }}" min="1" max="20"
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-300"
+                        placeholder="Contoh: 3">
+                    <small class="text-gray-500">Jumlah anggota keluarga yang menjadi tanggungan ekonomi orang tua.</small>
+                </div>
                 <div class="mt-6">
                     <x-primary-button type="submit"
                         class="ms-3">

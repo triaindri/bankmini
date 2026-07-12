@@ -24,6 +24,8 @@ class SiswaController extends Controller
             'telepon' => 'nullable|string|max:20',
             'tempat_lahir' => 'nullable|string|max:100',
             'tanggal_lahir' => 'nullable|date',
+            'pendapatan_orang_tua' => 'nullable|numeric|min:0',
+            'jumlah_tanggungan' => 'nullable|integer|min:1|max:20',
         ]);
 
         $siswa = Siswa::create([
@@ -36,6 +38,8 @@ class SiswaController extends Controller
             'telepon' => $request->telepon,
             'tempat_lahir' => $request->tempat_lahir,
             'tanggal_lahir' => $request->tanggal_lahir,
+            'pendapatan_orang_tua' => $request->pendapatan_orang_tua,
+            'jumlah_tanggungan' => $request->jumlah_tanggungan,
         ]);
 
         // Tambahkan tabungan awal dengan saldo 0
@@ -79,6 +83,8 @@ class SiswaController extends Controller
             'telepon' => 'nullable|string|max:20',
             'tempat_lahir' => 'nullable|string|max:100',
             'tanggal_lahir' => 'nullable|date',
+            'pendapatan_orang_tua' => 'nullable|numeric|min:0',
+            'jumlah_tanggungan' => 'nullable|integer|min:1|max:20',
         ]);
 
         $siswa->update([
@@ -91,9 +97,11 @@ class SiswaController extends Controller
             'telepon' => $request->telepon,
             'tempat_lahir' => $request->tempat_lahir,
             'tanggal_lahir' => $request->tanggal_lahir,
+            'pendapatan_orang_tua' => $request->pendapatan_orang_tua,
+            'jumlah_tanggungan' => $request->jumlah_tanggungan,
         ]);
-        return redirect()->route('siswa.show', $siswa->id)->with('success', 'Data berhasil diperbarui');
 
+        return redirect()->route('siswa.show', $siswa->id)->with('success', 'Data berhasil diperbarui');
     }
 
     public function destroy($id)
@@ -106,7 +114,7 @@ class SiswaController extends Controller
 
     public function show($id)
     {
-        $siswa = Siswa::with('tabungan')->findOrFail($id); // pastikan include relasi jika perlu
+        $siswa = Siswa::with('tabungan')->findOrFail($id);
         return view('siswa.show', compact('siswa'));
     }
 
