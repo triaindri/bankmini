@@ -74,25 +74,25 @@
         });
 
         // Grafik Transaksi Tabungan Mingguan
-        const transaksiLabels = @json($transaksiMingguan->pluck('tanggal'));
-        const transaksiData = @json($transaksiMingguan->pluck('total'));
+        // const transaksiLabels = @json($transaksiMingguan->pluck('tanggal'));
+        // const transaksiData = @json($transaksiMingguan->pluck('total'));
 
-        const ctxTransaksi = document.getElementById('chartTransaksi').getContext('2d');
-        new Chart(ctxTransaksi, {
-            type: 'line',
-            data: {
-                labels: transaksiLabels,
-                datasets: [{
-                    label: 'Jumlah Transaksi',
-                    data: transaksiData,
-                    borderColor: 'rgb(34, 197, 94)',
-                    backgroundColor: 'rgba(34, 197, 94, 0.2)',
-                    fill: true,
-                    tension: 0.4
-                }]
-            },
-            options: { scales: { y: { beginAtZero: true } } }
-        });
+        // const ctxTransaksi = document.getElementById('chartTransaksi').getContext('2d');
+        // new Chart(ctxTransaksi, {
+        //     type: 'line',
+        //     data: {
+        //         labels: transaksiLabels,
+        //         datasets: [{
+        //             label: 'Jumlah Transaksi',
+        //             data: transaksiData,
+        //             borderColor: 'rgb(34, 197, 94)',
+        //             backgroundColor: 'rgba(34, 197, 94, 0.2)',
+        //             fill: true,
+        //             tension: 0.4
+        //         }]
+        //     },
+        //     options: { scales: { y: { beginAtZero: true } } }
+        // });
 
         // Grafik Penjualan Mingguan
         const penjualanLabels = @json($penjualanMingguan->pluck('tanggal'));
@@ -162,6 +162,16 @@
                         @endif
                     </p>
                 @endforeach
+            </div>
+            <div class="bg-white p-4 rounded shadow mt-6">
+                <p class="font-semibold text-gray-800 mb-3">🏅 Pencapaian Menabung</p>
+                @forelse ($badges as $item)
+                    <span class="inline-block bg-yellow-100 text-yellow-800 text-sm px-3 py-1 rounded-full mr-2 mb-2">
+                        {{ $item->badge->nama }}
+                    </span>
+                @empty
+                    <p class="text-gray-400 text-sm">Belum ada badge yang diperoleh.</p>
+                @endforelse
             </div>
         </main>
     </div>

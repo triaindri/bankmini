@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
-    public function index()
+     public function index()
     {
         $user = Auth::user();
 
@@ -21,22 +21,38 @@ class DashboardController extends Controller
         $setoranBulanIni = 0;
         $penarikanBulanIni = 0;
         $transaksiTerakhir = collect();
+        $badges = collect();
 
         if ($user->siswa) {
-            $siswaId = $user->siswa->id;
+            $siswa = $user->siswa;
+            $tabungan = $siswa->tabungan;
 
-            $saldo = TransaksiTabungan::where('siswa_id', $siswaId)->sum('jumlah');
-            $setoranBulanIni = TransaksiTabungan::where('siswa_id', $siswaId)
+            $saldo = $tabungan->saldo ?? 0;
+
+            $setoranBulanIni = $tabungan
+                ?->transaksi()
                 ->whereMonth('tanggal', now()->month)
-                ->where('jenis', 'setor')->sum('jumlah');
-            $penarikanBulanIni = TransaksiTabungan::where('siswa_id', $siswaId)
+                ->whereYear('tanggal', now()->year)
+                ->where('jenis', 'setor')
+                ->sum('jumlah') ?? 0;
+
+            $penarikanBulanIni = $tabungan
+                ?->transaksi()
                 ->whereMonth('tanggal', now()->month)
-                ->where('jenis', 'tarik')->sum('jumlah');
-            $transaksiTerakhir = TransaksiTabungan::where('siswa_id', $siswaId)
-                ->orderBy('tanggal', 'desc')->take(5)->get();
+                ->whereYear('tanggal', now()->year)
+                ->where('jenis', 'tarik')
+                ->sum('jumlah') ?? 0;
+
+            $transaksiTerakhir = $tabungan
+                ?->transaksi()
+                ->orderBy('tanggal', 'desc')
+                ->take(5)
+                ->get() ?? collect();
+
+            $badges = $siswa->badges()->with('badge')->orderByDesc('diperoleh_pada')->get();
         }
-        // Data untuk koordinator/petugas
 
+        // Data untuk koordinator/petugas (tidak diubah)
         $jumlahSiswa = DB::table('transaksitabungan')
             ->join('tabungan', 'transaksitabungan.tabungan_id', '=', 'tabungan.id')
             ->join('siswa', 'tabungan.siswa_id', '=', 'siswa.id')
@@ -50,13 +66,12 @@ class DashboardController extends Controller
             ->where('jenis', 'setor')
             ->sum('jumlah');
 
-        $penjualanHariIni = Penjualan::whereDate('tanggal', today())->sum('total'); 
+        $penjualanHariIni = Penjualan::whereDate('tanggal', today())->sum('total');
         $transaksiMingguan = TransaksiTabungan::selectRaw('DATE(tanggal) as tanggal, COUNT(*) as total')
             ->where('tanggal', '>=', today()->subDays(6))->groupBy('tanggal')->orderBy('tanggal')->get();
         $penjualanMingguan = Penjualan::selectRaw('DATE(tanggal) as tanggal, COUNT(*) as total')
             ->where('tanggal', '>=', today()->subDays(6))->groupBy('tanggal')->orderBy('tanggal')->get();
 
-        // Data grafik jumlah siswa menabung per bulan (1 tahun)
         $startOfYear = now()->startOfYear();
         $endOfYear = now()->endOfYear();
 
@@ -74,17 +89,16 @@ class DashboardController extends Controller
         $labelsGrafikTahunan = [];
         $dataGrafikTahunan = [];
         foreach ($siswaPerBulan as $row) {
-            $labelsGrafikTahunan[] = Carbon::create($row->tahun, $row->bulan)->format('F'); // Januari, Februari...
+            $labelsGrafikTahunan[] = Carbon::create($row->tahun, $row->bulan)->format('F');
             $dataGrafikTahunan[] = $row->total_siswa;
         }
 
         return view('dashboard', compact(
-            'saldo','setoranBulanIni','penarikanBulanIni','transaksiTerakhir',
+            'saldo','setoranBulanIni','penarikanBulanIni','transaksiTerakhir','badges',
             'jumlahSiswa','totalNominalTabunganHariIni','penjualanHariIni',
             'transaksiMingguan','penjualanMingguan',
-            'labelsGrafikTahunan','dataGrafikTahunan' 
+            'labelsGrafikTahunan','dataGrafikTahunan'
         ));
-    }
-    
+    } 
     
 }

@@ -17,9 +17,9 @@ class FuzzyMamdaniService
             'tinggi' => ['shoulder_right', 60, 110],
         ],
         'setoran' => [
-            'kecil'  => ['shoulder_left', 0, 206000],
-            'sedang' => ['triangle', 103000, 310000, 517000],
-            'besar'  => ['shoulder_right', 414000, 620000],
+            'kecil'  => ['shoulder_left', 0, 300000],
+            'sedang' => ['triangle', 200000, 375000, 550000],
+            'besar'  => ['shoulder_right', 450000, 700000],
         ],
         'pendapatan' => [
             'rendah' => ['shoulder_left', 1000000, 5000000],

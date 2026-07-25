@@ -82,31 +82,42 @@ class SiswaAnalisisSeeder extends Seeder
                 'saldo'    => 0,
             ]);
 
-            $sisaSetoran = $data['setoran'];
-            $totalHari   = $periodeAwal->diffInDays($periodeAkhir);
+           $sisaSetoran = $data['setoran'];
+$totalHari   = $periodeAwal->diffInDays($periodeAkhir);
+$rataRata    = $data['setoran'] / $data['frekuensi'];
 
-            for ($t = 0; $t < $data['frekuensi']; $t++) {
-                $isLast = $t === $data['frekuensi'] - 1;
-                $jumlah = $isLast
-                    ? $sisaSetoran
-                    : (int) round($data['setoran'] / $data['frekuensi']);
+// Buat daftar tanggal unik dulu (sejauh cukup), baru diacak urutannya
+$tanggalTersedia = collect(range(0, $totalHari))->shuffle();
 
-                $sisaSetoran -= $jumlah;
+for ($t = 0; $t < $data['frekuensi']; $t++) {
+    $isLast = $t === $data['frekuensi'] - 1;
 
-                $tanggal = $periodeAwal->copy()->addDays(rand(0, $totalHari));
+    if ($isLast) {
+        $jumlah = $sisaSetoran;
+    } else {
+        // Variasi ±20% dari rata-rata, supaya nominal tidak monoton sama
+        $variasi = $rataRata * (rand(-20, 20) / 100);
+        $jumlah = max(1000, (int) round(($rataRata + $variasi) / 500) * 500); // dibulatkan ke kelipatan 500
+    }
 
-                Transaksitabungan::create([
-                    'tabungan_id' => $tabungan->id,
-                    'jenis'       => 'setor',
-                    'jumlah'      => $jumlah,
-                    'tanggal'     => $tanggal,
-                    'keterangan'  => 'Data dummy seeder',
-                    'status'      => 'disetujui',
-                    'user_id'     => $petugas->id,
-                ]);
+    $sisaSetoran -= $jumlah;
 
-                $tabungan->increment('saldo', $jumlah);
-            }
+    // Ambil tanggal dari daftar unik; kalau transaksi lebih banyak dari hari tersedia, baru mulai dobel
+    $offsetHari = $tanggalTersedia[$t % $tanggalTersedia->count()];
+    $tanggal = $periodeAwal->copy()->addDays($offsetHari);
+
+    Transaksitabungan::create([
+        'tabungan_id' => $tabungan->id,
+        'jenis'       => 'setor',
+        'jumlah'      => $jumlah,
+        'tanggal'     => $tanggal,
+        'keterangan'  => 'Data dummy seeder',
+        'status'      => 'disetujui',
+        'user_id'     => $petugas->id,
+    ]);
+
+    $tabungan->increment('saldo', $jumlah);
+}
             $this->command->info("Siswa {$data['nama']} dibuat dengan {$data['frekuensi']} transaksi setoran.");
         }
 

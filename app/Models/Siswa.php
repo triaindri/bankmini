@@ -24,4 +24,9 @@ class Siswa extends Model
     {
         return $this->hasMany(AnalisisPerilakuMenabung::class);
     }
+
+    public function badges()
+    {
+        return $this->hasMany(SiswaBadge::class);
+    }
 }

@@ -9,7 +9,7 @@ use Carbon\Carbon;
 
 class AnalisisPerilakuMenabungService
 {
-    public function __construct(protected FuzzyMamdaniService $fuzzy) {}
+    public function __construct(protected FuzzyMamdaniService $fuzzy, protected BadgeService $badgeService,) {}
 
     public function jalankan(Siswa $siswa, Carbon $periodeAwal, Carbon $periodeAkhir): AnalisisPerilakuMenabung
     {
@@ -34,7 +34,7 @@ class AnalisisPerilakuMenabungService
             tanggungan: (int) $siswa->jumlah_tanggungan,
         );
 
-        return AnalisisPerilakuMenabung::create([
+        $analisis = AnalisisPerilakuMenabung::create([
             'siswa_id'             => $siswa->id,
             'periode_awal'         => $periodeAwal,
             'periode_akhir'        => $periodeAkhir,
@@ -45,5 +45,10 @@ class AnalisisPerilakuMenabungService
             'skor'                 => $hasil['skor'],
             'kategori'             => $hasil['kategori'],
         ]);
+
+        // Evaluasi badge setelah hasil analisis tersimpan
+        $this->badgeService->evaluasi($siswa, $analisis);
+
+        return $analisis;
     }
 }
