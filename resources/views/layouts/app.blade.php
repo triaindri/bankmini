@@ -42,6 +42,7 @@
 
                 @hasrole('koordinator')
                     <a href="{{ route('produk.index') }}" class="block text-white">Pembelian Produk</a>
+                    <a href="{{ route('laporan.index') }}" class="block text-white">Laporan</a>
                 @endhasrole
 
                 @hasrole('petugas')

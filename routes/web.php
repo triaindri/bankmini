@@ -11,6 +11,8 @@ use App\Http\Controllers\TransaksiPenarikanController;
 use App\Http\Controllers\PenjualanController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DashboardSiswaController;
+use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\LaporanHarianController;
 use App\Http\Controllers\OtorisasiPenarikanController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\ProdukController;
@@ -104,6 +106,12 @@ Route::middleware(['auth', 'role:koordinator'])->group(function () {
     Route::get('/analisis-perilaku', [AnalisisPerilakuMenabungController::class, 'index'])->name('analisis.index');
     Route::post('/analisis-perilaku/generate', [AnalisisPerilakuMenabungController::class, 'generate'])->name('analisis.generate');
     Route::get('/analisis-perilaku/{siswa}', [AnalisisPerilakuMenabungController::class, 'show'])->name('analisis.show');
+});
+
+Route::middleware(['auth', 'role:koordinator'])->group(function () {
+    // ... route koordinator yang sudah ada ...
+    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+    Route::get('/laporan/export', [LaporanController::class, 'export'])->name('laporan.export');
 });
 
 require __DIR__.'/auth.php';

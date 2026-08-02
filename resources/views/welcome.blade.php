@@ -31,7 +31,7 @@
                         Dashboard
                     </a>
             @else
-                    <a href="{{ route('login') }}"
+<a href="{{ route('login') }}"
                        class="inline-block px-5 py-2 text-white bg-blue-400 hover:bg-blue-200 rounded-md text-sm">
                         Masuk
                     </a>
