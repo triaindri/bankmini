@@ -9,6 +9,7 @@ use App\Models\Tabungan;
 use App\Models\Transaksitabungan;
 use App\Models\User;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Hash;
 
 class SiswaAnalisisSeeder extends Seeder
 {
@@ -17,11 +18,7 @@ class SiswaAnalisisSeeder extends Seeder
      */
     public function run(): void
     {
-        $petugas = User::role('petugas')->first();
-
-        if (!$petugas) {
-            $petugas = User::first();
-        }
+        $petugas = User::role('petugas')->first() ?? User::first();
 
         if (!$petugas) {
             $this->command->error('Tidak ada user sama sekali. Buat minimal 1 user (petugas) dulu sebelum menjalankan seeder ini.');
@@ -41,35 +38,40 @@ class SiswaAnalisisSeeder extends Seeder
             ['nis' => 'SMP0010', 'nama' => 'Siswa J', 'frekuensi' => 7,   'setoran' => 25000,  'pendapatan' => 1800000, 'tanggungan' => 6],
         ];
 
-        // Bersihkan data dummy lama supaya seeder aman dijalankan berulang kali
         $nisList = array_column($dataSampel, 'nis');
-        $siswaLama = Siswa::whereIn('nis', $nisList)->get();
 
+        $siswaLama = Siswa::whereIn('nis', $nisList)->get();
         foreach ($siswaLama as $lama) {
-            // Hapus transaksi & tabungan dulu (foreign key), baru siswa-nya
-            $tabunganLama = $lama->tabungan;
-            if ($tabunganLama) {
-                $tabunganLama->transaksi()->delete();
-                $tabunganLama->delete();
+            if ($lama->tabungan) {
+                $lama->tabungan->transaksi()->delete();
+                $lama->tabungan->delete();
+            }
+            if ($lama->user_id) {
+                User::where('id', $lama->user_id)->delete();
             }
             $lama->delete();
-        }
-
-        if ($siswaLama->count() > 0) {
-            $this->command->info("Data dummy lama ({$siswaLama->count()} siswa) dihapus, akan dibuat ulang.");
         }
 
         $periodeAwal  = Carbon::now()->subMonths(2)->startOfMonth();
         $periodeAkhir = Carbon::now()->endOfMonth();
 
         foreach ($dataSampel as $data) {
+            $username = strtolower(str_replace(' ', '', $data['nis']));
+            $user = User::create([
+                'name'     => $data['nama'],
+                'email'    => $username . '@contoh.sch.id',
+                'username' => $username,
+                'password' => 'password',
+            ]);
+
             $siswa = Siswa::create([
+                'user_id'              => $user->id,
                 'nis'                  => $data['nis'],
                 'nama'                 => $data['nama'],
                 'kelas'                => 'XI TKJ 1',
                 'alamat'               => 'Jl. Contoh No. 1, Cianjur',
                 'jeniskelamin'         => 'laki-laki',
-                'email'                => strtolower(str_replace(' ', '', $data['nama'])) . '@contoh.sch.id',
+                'email'                => $user->email,
                 'telepon'              => '0812' . substr($data['nis'], -8),
                 'tempat_lahir'         => 'Cianjur',
                 'tanggal_lahir'        => Carbon::now()->subYears(16),
@@ -77,48 +79,32 @@ class SiswaAnalisisSeeder extends Seeder
                 'jumlah_tanggungan'    => $data['tanggungan'],
             ]);
 
-            $tabungan = Tabungan::create([
-                'siswa_id' => $siswa->id,
-                'saldo'    => 0,
-            ]);
+            $user->assignRole('siswa');
 
-           $sisaSetoran = $data['setoran'];
-$totalHari   = $periodeAwal->diffInDays($periodeAkhir);
-$rataRata    = $data['setoran'] / $data['frekuensi'];
+            $tabungan = Tabungan::create(['siswa_id' => $siswa->id, 'saldo' => 0]);
 
-// Buat daftar tanggal unik dulu (sejauh cukup), baru diacak urutannya
-$tanggalTersedia = collect(range(0, $totalHari))->shuffle();
+            $sisaSetoran = $data['setoran'];
+            $totalHari   = $periodeAwal->diffInDays($periodeAkhir);
 
-for ($t = 0; $t < $data['frekuensi']; $t++) {
-    $isLast = $t === $data['frekuensi'] - 1;
+            for ($t = 0; $t < $data['frekuensi']; $t++) {
+                $isLast = $t === $data['frekuensi'] - 1;
+                $jumlah = $isLast ? $sisaSetoran : (int) round($data['setoran'] / $data['frekuensi']);
+                $sisaSetoran -= $jumlah;
 
-    if ($isLast) {
-        $jumlah = $sisaSetoran;
-    } else {
-        // Variasi ±20% dari rata-rata, supaya nominal tidak monoton sama
-        $variasi = $rataRata * (rand(-20, 20) / 100);
-        $jumlah = max(1000, (int) round(($rataRata + $variasi) / 500) * 500); // dibulatkan ke kelipatan 500
-    }
+                Transaksitabungan::create([
+                    'tabungan_id' => $tabungan->id,
+                    'jenis'       => 'setor',
+                    'jumlah'      => $jumlah,
+                    'tanggal'     => $periodeAwal->copy()->addDays(rand(0, $totalHari)),
+                    // 'keterangan'  => 'Data dummy seeder',
+                    'status'      => 'disetujui',
+                    'user_id'     => $petugas->id,
+                ]);
 
-    $sisaSetoran -= $jumlah;
+                $tabungan->increment('saldo', $jumlah);
+            }
 
-    // Ambil tanggal dari daftar unik; kalau transaksi lebih banyak dari hari tersedia, baru mulai dobel
-    $offsetHari = $tanggalTersedia[$t % $tanggalTersedia->count()];
-    $tanggal = $periodeAwal->copy()->addDays($offsetHari);
-
-    Transaksitabungan::create([
-        'tabungan_id' => $tabungan->id,
-        'jenis'       => 'setor',
-        'jumlah'      => $jumlah,
-        'tanggal'     => $tanggal,
-        'keterangan'  => 'Data dummy seeder',
-        'status'      => 'disetujui',
-        'user_id'     => $petugas->id,
-    ]);
-
-    $tabungan->increment('saldo', $jumlah);
-}
-            $this->command->info("Siswa {$data['nama']} dibuat dengan {$data['frekuensi']} transaksi setoran.");
+            $this->command->info("Siswa {$data['nama']} dibuat — login: {$username} / password");
         }
 
         $this->command->info('Periode untuk uji coba analisis: ' . $periodeAwal->format('Y-m-d') . ' s/d ' . $periodeAkhir->format('Y-m-d'));

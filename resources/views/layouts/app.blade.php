@@ -15,11 +15,11 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
-    <div x-data="{ open: false }" class="min-h-screen flex bg-blue-100 dark:bg-gray-900">
+    <div x-data="{ open: false }" class="h-screen flex bg-blue-100 dark:bg-gray-900 overflow-hidden">
 
         <!-- Sidebar -->
-        <div :class="open ? 'block' : 'hidden'" class="md:block w-64 bg-blue-900 dark:bg-gray-800 p-4 space-y-4">
-
+        <div :class="open ? 'block' : 'hidden'"
+            class="md:block w-64 h-screen bg-blue-900 dark:bg-gray-800 p-4 space-y-4 overflow-y-auto">
         <!-- Logo -->
             <div class="mb-6">
                 <a href="{{ route('dashboard') }}">
@@ -73,7 +73,7 @@
         </div>
 
         <!-- Main Content -->
-        <div class="flex-1 flex flex-col">
+        <div class="flex-1 flex flex-col overflow-hidden">
 
             <!-- Header -->
             <header class="bg-blue-800 text-white px-6 py-4 shadow flex items-center justify-between">
@@ -99,7 +99,7 @@
                 <div class="relative" x-data="{ openProfile: false }">
                     <button @click="openProfile = !openProfile" class="flex items-center gap-3 focus:outline-none">
                         <!-- Foto Profil -->
-                        <img src="https://0.soompi.io/wp-content/uploads/2023/01/23135155/Beomgyu-1-1.jpeg"
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=1e3a8a&color=fff&size=128"
                             alt="Foto Profil"
                             class="w-10 h-10 rounded-full object-cover border border-gray-300">
 
@@ -134,7 +134,7 @@
             </header>
 
             <!-- Page Content -->
-            <main class="p-6">
+           <main class="flex-1 overflow-y-auto p-6">
                 {{ $slot }}
             </main>
         </div>
